@@ -5,6 +5,7 @@ from rasa_sdk.events import EventType, SlotSet, SessionStarted, ActionExecuted
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.forms import FormAction
 
+from cora.api import get_user_records
 
 class ActionSessionStart(Action):
     def name(self) -> Text:
@@ -108,13 +109,6 @@ class Empathize(Action):
         return []
 
 
-def normalize_phone_number(phone_number: Text) -> Text:
-    chars_to_replace = ["+", "-", "(", ")", "."]
-    for char in chars_to_replace:
-        phone_number = phone_number.replace(char, "")
-    return phone_number
-
-
 class UpdateSymptoms(Action):
     """
     This action retrieves slots from the user record and asks questions to follow-up.
@@ -125,3 +119,4 @@ class UpdateSymptoms(Action):
 
     async def run(self, dispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         userId = tracker.sender_id
+        get_user_records(userId)

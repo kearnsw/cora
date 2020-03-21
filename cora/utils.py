@@ -15,3 +15,9 @@ def convert_camel_to_snake(s: Text) -> Text:
 def convert_snake_to_camel(s: Text) -> Text:
     return "".join(word.title() for word in s.split("_"))
 
+
+def normalize_phone_number(phone_number: Text) -> Text:
+    chars_to_replace = ["+", "-", "(", ")", "."]
+    for char in chars_to_replace:
+        phone_number = phone_number.replace(char, "")
+    return phone_number
