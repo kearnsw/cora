@@ -7,3 +7,5 @@ build/*
 *.egg*
 dist/
 dist/*
+rasa.*
+events.*
