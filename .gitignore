@@ -1,0 +1,9 @@
+.idea
+models/*
+models/
+credentials.yml
+build/
+build/*
+*.egg*
+dist/
+dist/*

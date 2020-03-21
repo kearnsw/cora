@@ -1,0 +1,124 @@
+session_config:
+  session_expiration_time: 60.0
+  carry_over_slots_to_new_session: true
+intents:
+- greet
+- affirm
+- deny
+- goodbye
+- ask
+- inform
+- explain
+- describe_mood
+entities:
+- age
+- viscosity
+- relation
+- state
+responses:
+  utter_flu_or_corona_1:
+    - text: Do you have shortness of breath or difficulty breathing?
+      buttons:
+        - title: "yes"
+          payload: "yes"
+        - title: "no"
+          payload: "no"
+  utter_greet:
+    - text: Hi, it's Cora. I'm here to check up with you. Is now a good time?
+      buttons:
+        - title: "yes"
+          payload: "yes"
+        - title: "no"
+          payload: "no"
+  utter_schedule:
+    - text: When is a good time to contact you?
+      buttons:
+        - title: "morning"
+          payload: "morning"
+        - title: "evening"
+          payload: "evening"
+  utter_ask_mood:
+    - text: How are you feeling?
+  utter_any_symptoms:
+    - text: 'Are you experiencing any of the following symptoms: shortness of breath,
+      dry cough, fever, sore throat, headache?'
+      buttons:
+        - title: "yes"
+          payload: "yes"
+        - title: "no"
+          payload: "no"
+  utter_contact:
+    - text: Within the past 2 weeks, have you come into contact with anyone who had
+        any of these symptoms (shortness of breath, dry cough, fever, sore throat headache)
+        or been diagnosed with having coronavirus?
+      buttons:
+        - title: "yes"
+          payload: "yes"
+        - title: "no"
+          payload: "no"
+  utter_fever:
+    - text: Do you have a fever?
+      buttons:
+        - title: "yes"
+          payload: "yes"
+        - title: "no"
+          payload: "no"
+  utter_flu_or_corona_10:
+    - text: Do you have a runny or stuffy nose?
+      buttons:
+        - title: "yes"
+          payload: "yes"
+        - title: "no"
+          payload: "no"
+  utter_cold_or_corona_1:
+    - text: Are you sneezing?
+      buttons:
+        - title: "yes"
+          payload: "yes"
+        - title: "no"
+          payload: "no"
+  utter_cold_or_corona_10:
+    - text: Do you have a cough?
+      buttons:
+        - title: "yes"
+          payload: "yes"
+        - title: "no"
+          payload: "no"
+  utter_cold_or_corona_101:
+    - text: Is your cough wet?
+      buttons:
+        - title: "yes"
+          payload: "yes"
+        - title: "no"
+          payload: "no"
+  utter_unlikely:
+    - text: While it is unlikely you have coronavirus, our recommendation is that you
+        self-quarantine to prevent the spread of the disease. This means staying at
+        home and avoiding close contact with other people.
+  utter_likely:
+    - text: You may have coronavirus. Please seek out testing at the closest center
+        [location here].
+  utter_quarantine:
+    - text: Our recommendation is that you self-quarantine due to possible exposure.
+        This means staying at home and avoiding close contact with other people.
+  utter_goodbye:
+    - text: I hope you feel better soon. My creators are working on new features that
+        are coming soon.
+actions:
+- utter_greet
+- utter_ask_mood
+- utter_any_symptoms
+- utter_contact
+- utter_fever
+- utter_flu_or_corona_1
+- utter_flu_or_corona_10
+- utter_cold_or_corona_1
+- utter_cold_or_corona_10
+- utter_cold_or_corona_101
+- utter_unlikely
+- utter_likely
+- utter_quarantine
+- utter_goodbye
+- action_empathize
+forms:
+- screening_form
