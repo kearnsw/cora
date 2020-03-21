@@ -106,3 +106,22 @@ class Empathize(Action):
         print("Recieved: {}".format(tracker.latest_message))
         dispatcher.utter_message("[empathic response]", image="https://i.imgur.com/nGF1K8f.jpg")
         return []
+
+
+def normalize_phone_number(phone_number: Text) -> Text:
+    chars_to_replace = ["+", "-", "(", ")", "."]
+    for char in chars_to_replace:
+        phone_number = phone_number.replace(char, "")
+    return phone_number
+
+
+class UpdateSymptoms(Action):
+    """
+    This action retrieves slots from the user record and asks questions to follow-up.
+    """
+
+    def name(self) -> Text:
+        return "action_update_symptoms"
+
+    async def run(self, dispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        userId = tracker.sender_id
