@@ -1,18 +1,21 @@
 
+## Deploy
+
+Deployment notes can be found in [DEPLOY.md](DEPLOY.md)
+
 ## Action Server Docker Build
 
 Build image locally:
 
 ```
-export VERS=0.1.0
+export VERS=0.1.3
 docker build -t wacovid/cora-actions:latest -t wacovid/cora-actions:${VERS} .
 ```
 
 Test locally:
 
 ```
-docker build -t wacovid/cora-actions .
-docker run -p 5055:5055 wacovid/cora-actions
+docker run -p 5005:5005 wacovid/cora-actions
 ```
 
 Push to Docker hub:
@@ -21,6 +24,8 @@ Push to Docker hub:
 docker login --username=wacovid --password=xyzzy
 docker push wacovid/cora-actions
 ```
+
+View docker hub tags: https://hub.docker.com/r/wacovid/cora-actions/tags
 
 ## Runnnig Locally
 

@@ -55,7 +55,7 @@ From the directory containing the `values.yml` do the following:
 
 ```
 export KUBECONFIG=~/.kube/wa-covid
-kubectl --namespace <your namespace> \
+kubectl -n <your namespace> \
 kubectl get svc
 kubectl create secret docker-registry gcr-pull-secret \
     --docker-server=gcr.io \
@@ -65,30 +65,29 @@ kubectl create ns wa-covid-bot
 helm repo add rasa-x https://rasahq.github.io/rasa-x-helm
 helm install \
     --generate-name \
-    --namespace wa-covid-bot \
+    -n wa-covid-bot \
     --values values.yml \
     rasa-x/rasa-x
-kubectl --namespace wa-covid-bot get pods
-kubectl --namespace wa-covid-bot logs rasa
-kubectl --namespace wa-covid-bot describe pod rasa-x
-kubectl --namespace wa-covid-bot get service \
-    -l app.kubernetes.io/component=nginx \
+kubectl -n wa-covid-bot get pods
+kubectl -n wa-covid-bot logs rasa
+kubectl -n wa-covid-bot describe pod rasa-x
+kubectl -n wa-covid-bot get service -l app.kubernetes.io/component=nginx \
     -o jsonpath="{.items..status..loadBalancer..ingress[0].ip}"
 ```
 
 ### Helm Cheatsheet
 
-Preface all of these commands with `helm`.
+Preface all of these commands with `helm`. In these examples the release name is `prod`.
 
-| CMD                                                                     | Info            |
-| ----------------------------------------------------------------------- | --------------- |
-| install prod --namespace wa-covid-bot --values values.yml rasa-x/rasa-x |                 |
-| list --namespace wa-covid-bot                                           | list releases   |
-| uninstall --namespace wa-covid-bot prod                                 | uninstall chart |
-| repo list --namespace wa-covid-bot                                      | List repos      |
-| status --namespace wa-covid-bot prod                                    | Status          |
-| upgrade --namespace wa-covid-bot rasa-x-1584837298 rasa-x/rasa-x        |                 |
-| history rasa-x-1584837298 --namespace wa-covid-bot                      | Release history |
+| CMD                                                            | Info            |
+| -------------------------------------------------------------- | --------------- |
+| install prod -n wa-covid-bot --values values.yml rasa-x/rasa-x |                 |
+| list -n wa-covid-bot                                           | list releases   |
+| uninstall -n wa-covid-bot prod                                 | uninstall chart |
+| repo list -n wa-covid-bot                                      | List repos      |
+| status -n wa-covid-bot prod                                    | Status          |
+| upgrade -n wa-covid-bot prod --values values.yml rasa-x/rasa-x | Upgrade         |
+| history prod -n wa-covid-bot                                   | Release history |
 
 ### Kubectl Cheatsheet
 
@@ -96,7 +95,13 @@ Preface all of these commands with `kubectl` and you need to have `KUBECONFIG` s
 
 `export KUBECONFIG=~/.kube/wa-covid`
 
-| CMD                                 | Info              |
-| ----------------------------------- | ----------------- |
-| --namespace wa-covid-bot get pods   | Show running pods |
-| --namespace wa-covid-bot logs <pod> | Show pod logs     |
+| CMD                                                              | Info               |
+| ---------------------------------------------------------------- | ------------------ |
+| -n wa-covid-bot get pods                                         | Show running pods  |
+| -n wa-covid-bot logs <pod>                                       | Show pod logs      |
+| -n wa-covid-bot logs -l app.kubernetes.io/component=rasa-x       | logs               |
+| -n wa-covid-bot describe pod <pod>                               | Pod config         |
+| -n wa-covid-bot describe pod -l app.kubernetes.io/component=app  | Pod config         |
+| -n wa-covid-bot get service -l app.kubernetes.io/component=nginx | Get ip             |
+| -n wa-covid-bot exec -it <pod> -- /bin/bash                      | shell              |
+| -n wa-covid-bot delete pod -l app.kubernetes.io/component=app    | Delete/restart pod |

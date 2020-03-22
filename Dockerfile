@@ -1,5 +1,6 @@
 # Latest rasa-sdk version: https://hub.docker.com/r/rasa/rasa-sdk/tags
-# docker build -t wacovid/cora-actions:latest -t wacovid/cora-actions:0.1.0 .
+# export VERS=0.1.1
+# docker build -t wacovid/cora-actions:latest -t wacovid/cora-actions:${VERS} .
 # docker login --username=wacovid --password=xyzzy
 # docker push wacovid/cora-actions
 # docker build -t test:actions .
@@ -11,12 +12,14 @@ SHELL ["/bin/bash", "-c"]
 USER root
 
 RUN apt-get update -qq && \
-#    apt-get install -y <NAME_OF_REQUIRED_PACKAGE> && \
-    apt-get clean \
+    apt-get install -y \
+      curl \
+      iputils-ping
+#    apt-get clean \
 #    rm -rf /var/lib/apt/lists/* \
 #    rm -rf /tmp/* \
 #    rm -rf /var/tmp/* \
-    mkdir /app
+#    mkdir /app
 
 # To install packages from PyPI
 RUN pip install --no-cache-dir \

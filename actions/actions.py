@@ -3,6 +3,7 @@ from typing import Dict, Text, Any, List, Union, Optional
 import logging
 import json
 import requests
+import os
 
 from overrides import overrides
 from rasa_sdk import Tracker, Action
@@ -16,7 +17,8 @@ from cora.responses import UserRecordResponse
 from cora.utils import normalize_phone_number
 
 logger = logging.getLogger(__name__)
-vers = 'Vers: 0.1.0, Date: Mar 22, 2020'
+vers = 'Vers: 0.1.3, Date: Mar 22, 2020'
+logger.info(f"Starting vers: {vers}")
 
 class ActionSessionStart(Action):
     def name(self) -> Text:
@@ -250,8 +252,16 @@ class ActionVersion(Action):
     def run(self, dispatcher, tracker, domain):
         #logger.info(">>> responding with version: {}".format(vers))
         #dispatcher.utter_message(vers) #send the message back to the user
+        if os.getenv('RASA_X_PROD_NGINX_SERVICE_HOST'):
+            nginx_host = os.getenv('RASA_X_PROD_NGINX_SERVICE_HOST') + ':8000'
+        elif os.getenv('RASA_X_1584837298_NGINX_SERVICE_HOST'):
+            nginx_host = os.getenv('RASA_X_1584837298_NGINX_SERVICE_HOST') + ':8000'
+        else:
+            nginx_host = 'rasa-x:5002'
         try:
-            request = json.loads(requests.get('http://rasa-x:5002/api/version').text)
+            # https://kubernetes.io/docs/concepts/services-networking/service/
+            logger.info(f"connecting to {nginx_host}")
+            request = json.loads(requests.get('http://' + nginx_host + '/api/version').text)
         except:
             request = { "rasa-x": "", "rasa": { "production": "" }}
             #request['rasa-x'] == ''
