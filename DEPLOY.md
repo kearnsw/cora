@@ -13,12 +13,24 @@ Rasa with AWS EKS and Helm. The main Rasa docs on this are [here](https://rasa.c
 
 ## ToDo
 
+- Action code storage [options](https://aws.amazon.com/premiumsupport/knowledge-center/eks-persistent-storage/) are EBS (block storage) or EFS.
+- Deploy issue:
+  - `Error from server (BadRequest): container "rasa-x" in pod "rasa-x-1584834511-rasa-x-68f7669879-vrhcn" is waiting to start: trying and failing to pull image`
 - Setup channel `credentials.yml` which go under `values.yml` for Helm. See [docs](https://rasa.com/docs/rasa-x/installation-and-setup/openshift-kubernetes/#configure-rasa-open-source-channels)
 - Update app docker image in `values.yml` (I presume we will need this for additional libraries - dynamoDB)
 - Figure out how to assign AWS instance types to Rasa node types to reduce resource usage
   - Multiple node groups?
   - Recommended [container specs](https://rasa.com/docs/rasa-x/installation-and-setup/openshift-kubernetes/#deploy-to-a-cluster-logging)
   - AWS [instance specs](https://aws.amazon.com/ec2/instance-types/)
+
+### EFS & Helm
+
+[Example project](https://github.com/helm/charts/tree/master/stable/efs-provisioner)
+
+```
+helm install stable/efs-provisioner --set efsProvisioner.efsFileSystemId=fs-12345678 --set efsProvisioner.awsRegion=us-east-2
+helm inspect values stable/efs-provisioner
+```
 
 ## Rasa k8s Notes
 
