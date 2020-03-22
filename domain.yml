@@ -12,6 +12,7 @@ intents:
   - find_testing
   - mental_health
   - start
+  - version
 
 slots:
   cough:
@@ -24,6 +25,8 @@ slots:
     type: unfeaturized
 
 responses:
+  utter_version:
+    - text: "Model 0.1.0 - Mar 22, 2020"
   utter_greet:
     - text: 'Hi, how can I help? You can say things like "update my symptoms", "find a testing site", or "reduce stress and anxiety".'
   utter_scheduled_greet:
@@ -65,3 +68,6 @@ responses:
 
 forms:
     - followup_form
+
+actions:
+    - action_version

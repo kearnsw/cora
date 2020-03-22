@@ -1,5 +1,8 @@
 from requests import Response
 from typing import Dict, Text, Any, List, Union, Optional
+import logging
+import json
+import requests
 
 from overrides import overrides
 from rasa_sdk import Tracker, Action
@@ -12,6 +15,8 @@ from cora.models import Symptom, UserRecord
 from cora.responses import UserRecordResponse
 from cora.utils import normalize_phone_number
 
+logger = logging.getLogger(__name__)
+vers = 'Vers: 0.1.0, Date: Mar 22, 2020'
 
 class ActionSessionStart(Action):
     def name(self) -> Text:
@@ -57,6 +62,7 @@ class FollowupForm(FormAction):
     @staticmethod
     def required_slots(tracker: Tracker) -> List[Text]:
         """A list of required slots that the form has to fill"""
+        logger.info("followup_form, required_slots")
         return [symptom.name.lower() for symptom in get_symptoms_by_severity(tracker.sender_id)]
 
     def slot_mappings(self) -> Dict[Text, Union[Dict, List[Dict]]]:
@@ -85,18 +91,18 @@ class FollowupForm(FormAction):
         """Request the next slot and utter template if needed,
             else return None"""
 
-        print("Requesting slot...")
+        logger.info("Requesting slot...")
         for slot in self.required_slots(tracker):
             if self._should_request_slot(tracker, slot):
                 # Check if already captured
                 severity = get_symptom_severity(tracker.sender_id, slot)
                 if severity is not None:
-                    print(f"follow up on {slot}")
+                    logger.info(f"follow up on {slot}")
                     tracker.slots["severity"] = severity
                     tracker.slots["symptom"] = slot
                     dispatcher.utter_message(template=f"utter_followup_symptom", **tracker.slots)
                 else:
-                    print(f"first time asking {slot}")
+                    logger.info(f"first time asking {slot}")
                     dispatcher.utter_message(template=f"utter_ask_{slot}", **tracker.slots)
                 return [SlotSet(REQUESTED_SLOT, slot), SlotSet("severity", severity)]
 
@@ -145,7 +151,7 @@ class FollowupForm(FormAction):
         # utter submit template
         dispatcher.utter_message(template='utter_thank_you')
         res = update_symptoms(tracker)
-        print(res.status_code, res.text)
+        logger.info(res.status_code, res.text)
         return [AllSlotsReset()]
 
 
@@ -158,20 +164,20 @@ class Empathize(Action):
         Dict[Text, Any]]:
         sensitive_keywords = ["died", "dies", "dying", "sick"]
         mood = tracker.get_slot('state')
-        print("Recieved: {}".format(tracker.latest_message))
+        logger.info("Recieved: {}".format(tracker.latest_message))
         dispatcher.utter_message("[empathic response]", image="https://i.imgur.com/nGF1K8f.jpg")
         return []
 
 
 def update_symptoms(tracker: Tracker) -> Optional[Response]:
     user_id = normalize_phone_number(tracker.sender_id)
-    print(f"Posting new record for {user_id}.")
+    logger.info(f"Posting new record for {user_id}.")
     user_record = get_user_records(user_id).most_recent()
     symptom_frame = tracker.current_slot_values()
     updated_symptoms = []
     updates = 0
     for symptom in user_record.symptoms:
-        print(symptom)
+        logger.info(symptom)
         symptom_name = symptom.name.lower()
         if symptom_frame.get(symptom_name) is not None:
             symptom.severity = int(symptom_frame[symptom_name])
@@ -187,7 +193,9 @@ def update_symptoms(tracker: Tracker) -> Optional[Response]:
 
 
 def get_symptoms_by_severity(sender_id: Text) -> List[Symptom]:
+    logger.debug(f", get_symptoms_by_severity, sender_id: {sender_id}")
     user_id = normalize_phone_number(sender_id)
+    logger.warning(f"user_id: {user_id}")
     records = get_user_records(user_id)
     record = records.most_recent()
     return record.symptoms_by_severity()
@@ -197,7 +205,7 @@ def get_symptom_severity(sender_id: Text, slot_name: Text) -> Optional[int]:
     user_id: Text = normalize_phone_number(sender_id)
     records: UserRecordResponse = get_user_records(user_id)
     symptom_severities: Dict[Text, int] = {symptom.name.lower(): symptom.severity for symptom in records.most_recent().symptoms}
-    print(slot_name, symptom_severities)
+    logger.info(slot_name, symptom_severities)
     return symptom_severities.get(slot_name)
 
 
@@ -232,3 +240,24 @@ class CheckSymptoms(Action):
 
         except AttributeError:
             return []
+
+class ActionVersion(Action):
+    def name(self):
+        logger.info("ActionVersion self called")
+        # define the name of the action which can then be included in training stories
+        return "action_version"
+
+    def run(self, dispatcher, tracker, domain):
+        #logger.info(">>> responding with version: {}".format(vers))
+        #dispatcher.utter_message(vers) #send the message back to the user
+        try:
+            request = json.loads(requests.get('http://rasa-x:5002/api/version').text)
+        except:
+            request = { "rasa-x": "", "rasa": { "production": "" }}
+            #request['rasa-x'] == ''
+            #request['rasa']['production'] = ''
+        logger.info(">> rasa x version response: {}".format(request['rasa-x']))
+        logger.info(">> rasa version response: {}".format(request['rasa']['production']))
+        dispatcher.utter_message(f"Action: {vers}\nRasa X: {request['rasa-x']}\nRasa:  {request['rasa']['production']}")
+        return []
+

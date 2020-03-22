@@ -1,5 +1,9 @@
 # Latest rasa-sdk version: https://hub.docker.com/r/rasa/rasa-sdk/tags
+# docker build -t wacovid/cora-actions:latest -t wacovid/cora-actions:0.1.0 .
+# docker login --username=wacovid --password=xyzzy
+# docker push wacovid/cora-actions
 # docker build -t test:actions .
+# docker run -p 5055:5055 test:actions
 FROM rasa/rasa-sdk:1.8.1
 
 SHELL ["/bin/bash", "-c"]
@@ -15,7 +19,9 @@ RUN apt-get update -qq && \
     mkdir /app
 
 # To install packages from PyPI
-#RUN pip install --no-cache-dir <A_REQUIRED_PACKAGE_ON_PYPI>
+RUN pip install --no-cache-dir \
+  overrides \
+  aws_requests_auth
 
 USER 1001
 

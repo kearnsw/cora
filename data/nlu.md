@@ -79,8 +79,6 @@
 - [9](rating)
 - [10](rating)
 
-
-
 ## intent:describe_mood
 - I feel [tired](state)
 - I'm [coughing alot](state)
@@ -91,3 +89,13 @@
 - What's that?
 - What's contact?
 - how do i know if i've come in contact?
+
+## intent:version
+- version
+- show version
+- what version
+- what's your version
+- show build date
+- what is your build date
+- what's your build
+- show model version

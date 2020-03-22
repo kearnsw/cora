@@ -1,8 +1,10 @@
 from typing import Any, Dict, List, Optional, Text
+import logging
 
 from cora.models import UserRecord
 from cora.utils import convert_model_to_snake_case
 
+logger = logging.getLogger(__name__)
 
 class UserRecordResponse:
     def __init__(self, user_id: Text = None, data: List[UserRecord] = None):
@@ -17,5 +19,6 @@ class UserRecordResponse:
         return self
 
     def most_recent(self) -> UserRecord:
+        logger.debug(f"most_recent")
         return max(self.data, key=lambda d: d.timestamp)
 

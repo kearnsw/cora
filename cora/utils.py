@@ -1,5 +1,8 @@
 import re
+import logging
 from typing import Any, Dict, Text
+
+logger = logging.getLogger(__name__)
 
 camelCase = re.compile(r"(?<!^)(?=[A-Z])")
 
@@ -17,6 +20,8 @@ def convert_snake_to_camel(s: Text) -> Text:
 
 
 def normalize_phone_number(phone_number: Text) -> Text:
+    if phone_number == None or len(phone_number) > 15:
+        phone_number = "2065551212"
     chars_to_replace = ["+", "-", "(", ")", "."]
     for char in chars_to_replace:
         phone_number = phone_number.replace(char, "")
