@@ -20,9 +20,9 @@ class Symptom:
 
     def to_dynamo_model(self) -> Dict[Text, Any]:
         model = {"name": self.name,
-                 "startDate": self.start_date,
-                 "endDate": self.end_date,
-                 "severity": self.severity,
+                 "startDate": int(0 if self.start_date is None else self.start_date),
+                 "endDate": int(0 if self.end_date is None else self.end_date),
+                 "severity": int(0 if self.severity is None else self.severity),
                  "description": self.description
                  }
 
@@ -63,11 +63,11 @@ class UserRecord:
 
     def to_dynamo_model(self) -> Dict[Text, Any]:
         model = {"userId": self.user_id,
-                 "timestamp": self.timestamp,
+                 "timestamp": int(0 if self.timestamp is None else self.timestamp),
                  "phoneNumber": self.phone_number,
-                 "age": self.age,
+                 "age": int(0 if self.age is None else self.age),
                  "zipCode": self.zip_code,
-                 "dob": self.dob,
+                 "dob": int(0 if self.dob is None else self.dob),
                  "gender": self.gender,
                  "healthCondition": self.health_condition,
                  "internationalTravel": self.international_travel,
@@ -83,3 +83,9 @@ class UserRecord:
                 v = [Symptom().load_from_model(symptom) for symptom in v]
             setattr(self, k, v)
         return self
+
+    def most_severe_symptom(self) -> Symptom:
+        return max(self.symptoms, key=lambda s: s.severity)
+
+    def symptoms_by_severity(self) -> List[Symptom]:
+        return sorted(self.symptoms, key=lambda s: s.severity, reverse=True)

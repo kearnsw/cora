@@ -1,4 +1,5 @@
 from typing import Any, Dict, List, Optional, Text
+
 from cora.models import UserRecord
 from cora.utils import convert_model_to_snake_case
 
@@ -14,3 +15,7 @@ class UserRecordResponse:
                 v = [UserRecord().load_from_model(record) for record in v]
             setattr(self, k, v)
         return self
+
+    def most_recent(self) -> UserRecord:
+        return max(self.data, key=lambda d: d.timestamp)
+

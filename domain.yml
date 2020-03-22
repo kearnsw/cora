@@ -1,124 +1,67 @@
-session_config:
-  session_expiration_time: 60.0
-  carry_over_slots_to_new_session: true
-intents:
-- greet
-- affirm
-- deny
-- goodbye
-- ask
-- inform
-- explain
-- describe_mood
 entities:
-- age
-- viscosity
-- relation
-- state
+  - rating
+
+intents:
+  - greet
+  - affirm
+  - deny
+  - goodbye
+  - ask
+  - inform
+  - update_symptoms
+  - find_testing
+  - mental_health
+  - start
+
+slots:
+  cough:
+    type: unfeaturized
+    auto_fill: false
+  fever:
+    type: unfeaturized
+    auto_fill: false
+  severity:
+    type: unfeaturized
+
 responses:
-  utter_flu_or_corona_1:
-    - text: Do you have shortness of breath or difficulty breathing?
-      buttons:
-        - title: "yes"
-          payload: "yes"
-        - title: "no"
-          payload: "no"
   utter_greet:
-    - text: Hi, it's Cora. I'm here to check up with you. Is now a good time?
-      buttons:
-        - title: "yes"
-          payload: "yes"
-        - title: "no"
-          payload: "no"
-  utter_schedule:
-    - text: When is a good time to contact you?
-      buttons:
-        - title: "morning"
-          payload: "morning"
-        - title: "evening"
-          payload: "evening"
-  utter_ask_mood:
-    - text: How are you feeling?
-  utter_any_symptoms:
-    - text: 'Are you experiencing any of the following symptoms: shortness of breath,
-      dry cough, fever, sore throat, headache?'
-      buttons:
-        - title: "yes"
-          payload: "yes"
-        - title: "no"
-          payload: "no"
-  utter_contact:
-    - text: Within the past 2 weeks, have you come into contact with anyone who had
-        any of these symptoms (shortness of breath, dry cough, fever, sore throat headache)
-        or been diagnosed with having coronavirus?
-      buttons:
-        - title: "yes"
-          payload: "yes"
-        - title: "no"
-          payload: "no"
-  utter_fever:
-    - text: Do you have a fever?
-      buttons:
-        - title: "yes"
-          payload: "yes"
-        - title: "no"
-          payload: "no"
-  utter_flu_or_corona_10:
-    - text: Do you have a runny or stuffy nose?
-      buttons:
-        - title: "yes"
-          payload: "yes"
-        - title: "no"
-          payload: "no"
-  utter_cold_or_corona_1:
-    - text: Are you sneezing?
-      buttons:
-        - title: "yes"
-          payload: "yes"
-        - title: "no"
-          payload: "no"
-  utter_cold_or_corona_10:
-    - text: Do you have a cough?
-      buttons:
-        - title: "yes"
-          payload: "yes"
-        - title: "no"
-          payload: "no"
-  utter_cold_or_corona_101:
-    - text: Is your cough wet?
-      buttons:
-        - title: "yes"
-          payload: "yes"
-        - title: "no"
-          payload: "no"
-  utter_unlikely:
-    - text: While it is unlikely you have coronavirus, our recommendation is that you
-        self-quarantine to prevent the spread of the disease. This means staying at
-        home and avoiding close contact with other people.
-  utter_likely:
-    - text: You may have coronavirus. Please seek out testing at the closest center
-        [location here].
-  utter_quarantine:
-    - text: Our recommendation is that you self-quarantine due to possible exposure.
-        This means staying at home and avoiding close contact with other people.
-  utter_goodbye:
-    - text: I hope you feel better soon. My creators are working on new features that
-        are coming soon.
-actions:
-- utter_greet
-- utter_ask_mood
-- utter_any_symptoms
-- utter_contact
-- utter_fever
-- utter_flu_or_corona_1
-- utter_flu_or_corona_10
-- utter_cold_or_corona_1
-- utter_cold_or_corona_10
-- utter_cold_or_corona_101
-- utter_unlikely
-- utter_likely
-- utter_quarantine
-- utter_goodbye
-- action_empathize
+    - text: 'Hi, how can I help? You can say things like "update my symptoms", "find a testing site", or "reduce stress and anxiety".'
+  utter_scheduled_greet:
+    - text: "Hi, it's Cora. Is now a good time to check-in?"
+  utter_ask_cough:
+    - text: "How would you rate your cough on a scale of 1-10?"
+  utter_followup_symptom:
+    - text: "How is your {symptom} today on a scale of 1-10? Last time, you rated it a {severity}."
+  utter_followup_cough:
+    - text: "How is your cough today on a scale of 1-10? Last time, you rated it a {severity}."
+  utter_ask_fever:
+    - text: "How would you rate your fever on a scale of 1-10?"
+  utter_followup_fever:
+    - text: "How is your fever today on a scale of 1-10? Last time, you rated it a {severity}."
+  utter_submit:
+    - text: "All done!"
+  utter_slots_values:
+    - text: "For today we have:\n
+             - cough: {cough}\n
+             - fever: {fever}\n"
+  utter_chitchat:
+    - text: "chitchat"
+  utter_ask_continue:
+    - text: "do you want to continue?"
+  utter_default:
+    - text: "sorry, I didn't understand you, please try input something else"
+  utter_iamabot:
+    - text: "I am a bot built to help public health officials, doctors, and researchers get up to date data on coronavirus."
+  utter_thank_you:
+    - text: "Thank you for taking the time to check-in today!"
+  utter_feeling_better:
+    - text: "I'm glad to hear you are feeling better."
+  utter_worsening_fever:
+    - text: "That's worse than when we last spoke. If your fever reaches 103 or lasts more than 3 days, make sure to call your doctor."
+  utter_request_rating:
+    - text: "Sorry I didn't understand that. I'm trying to improve everyday. For now, could you please provide a number between 1 and 10?"
+  utter_check_others:
+    - text: "Let's check your other symptoms."
+
 forms:
-- screening_form
+    - followup_form

@@ -1,6 +1,8 @@
 import asyncio
 import inspect
 import json
+from time import sleep
+
 import requests
 from asyncio import Queue, CancelledError
 from typing import Any, Awaitable, Callable, Dict, Optional, Text, List
@@ -116,11 +118,12 @@ class ZipwhipConnector(InputChannel):
             "https://api.zipwhip.com/message/send", data=payload
         )
 
-    def send_all(self, recipient: Text, messages: List[Dict[Text, Any]], delivery_time: float = None, delay: int = 0):
+    def send_all(self, recipient: Text, messages: List[Dict[Text, Any]], delivery_time: int = None, delay: int = 3):
         for index, message in enumerate(messages):
             if delivery_time is not None:
-                print(self.send(recipient, message.get("text"), delivery_time + delay * index).text)
+                print(self.send(recipient, message.get("text"), float(delivery_time + delay * index)).text)
             else:
+                sleep(delay)
                 print(self.send(recipient, message.get("text")).text)
 
     def blueprint(

@@ -9,8 +9,8 @@ from cora.models import UserRecord
 from cora.responses import UserRecordResponse
 
 SIGV4_HEADERS: AWSRequestsAuth = AWSRequestsAuth(
-    aws_access_key=os.environ["API_ACCESS_KEY"],
-    aws_secret_access_key=os.environ["API_SECRET_KEY"],
+    aws_access_key="AKIAWYSIR3AO5YLAXX2B",
+    aws_secret_access_key="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",
     aws_host="picrmj04l0.execute-api.us-west-2.amazonaws.com",
     aws_region="us-west-2",
     aws_service="execute-api",
