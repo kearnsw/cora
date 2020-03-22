@@ -9,3 +9,5 @@ dist/
 dist/*
 rasa.*
 events.*
+.history
+deploy/
