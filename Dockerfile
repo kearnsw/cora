@@ -14,7 +14,8 @@ USER root
 RUN apt-get update -qq && \
     apt-get install -y \
       curl \
-      iputils-ping
+      iputils-ping \
+      aws-requests-auth
 #    apt-get clean \
 #    rm -rf /var/lib/apt/lists/* \
 #    rm -rf /tmp/* \

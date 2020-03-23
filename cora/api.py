@@ -4,19 +4,25 @@ import requests
 from typing import Text, Union
 from aws_requests_auth.aws_auth import AWSRequestsAuth
 from requests import Response
+from cora import config
+import logging
 
 from cora.models import UserRecord
 from cora.responses import UserRecordResponse
 
 SIGV4_HEADERS: AWSRequestsAuth = AWSRequestsAuth(
-    aws_access_key="AKIAWYSIR3AO5YLAXX2B",
-    aws_secret_access_key="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",
-    aws_host="picrmj04l0.execute-api.us-west-2.amazonaws.com",
-    aws_region="us-west-2",
+    aws_access_key=config.aws_access_key,
+    aws_secret_access_key=config.aws_secret_access_key,
+    aws_host=config.aws_host,
+    aws_region=config.aws_region,
     aws_service="execute-api",
 )
 
-API_ENDPOINT = "https://picrmj04l0.execute-api.us-west-2.amazonaws.com/Dev"
+API_ENDPOINT = config.aws_api_endpoint
+
+logger = logging.getLogger(__name__)
+logger.info(f"api.py, aws_access_key: {config.aws_access_key}")
+logger.info(f"api.py, API_ENDPOINT: {API_ENDPOINT}")
 
 
 def get_user_records(user_id: Text) -> Union[Response, UserRecordResponse]:

@@ -105,3 +105,11 @@ Preface all of these commands with `kubectl` and you need to have `KUBECONFIG` s
 | -n wa-covid-bot get service -l app.kubernetes.io/component=nginx | Get ip             |
 | -n wa-covid-bot exec -it <pod> -- /bin/bash                      | shell              |
 | -n wa-covid-bot delete pod -l app.kubernetes.io/component=app    | Delete/restart pod |
+
+### AWS CLI Cheatsheet
+
+I have profiles for my id, `wa-covid` and the api `wa-covid-api`, set up ~/.aws/credentials.
+
+| CMD                                                              | Info               |
+| ---------------------------------------------------------------- | ------------------ |
+| 

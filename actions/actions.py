@@ -199,8 +199,12 @@ def get_symptoms_by_severity(sender_id: Text) -> List[Symptom]:
     user_id = normalize_phone_number(sender_id)
     logger.warning(f"user_id: {user_id}")
     records = get_user_records(user_id)
-    record = records.most_recent()
-    return record.symptoms_by_severity()
+    logger.debug(f"records: {records}, typeof: {type(records)}")
+    if records['data']:
+        record = records.most_recent()
+        return record.symptoms_by_severity()
+    else:
+        return None
 
 
 def get_symptom_severity(sender_id: Text, slot_name: Text) -> Optional[int]:
