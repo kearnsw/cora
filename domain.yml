@@ -59,8 +59,8 @@ responses:
     - text: "Thank you for taking the time to check-in today!"
   utter_feeling_better:
     - text: "I'm glad to hear you are feeling better."
-  utter_worsening_fever:
-    - text: "That's worse than when we last spoke. If your fever reaches 103 or lasts more than 3 days, make sure to call your doctor."
+  utter_worsening_symptom:
+    - text: "That's worse than when we last spoke."
   utter_request_rating:
     - text: "Sorry I didn't understand that. I'm trying to improve everyday. For now, could you please provide a number between 1 and 10?"
   utter_check_others:

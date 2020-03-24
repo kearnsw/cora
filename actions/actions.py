@@ -161,7 +161,7 @@ class FollowupForm(FormAction):
 
                 # Condition worsened
                 elif new_severity > prev_severity:
-                    dispatcher.utter_message(template="utter_worsening_fever")
+                    dispatcher.utter_message(template="utter_worsening_symptom")
 
             return {symptom_name: value}
         else:
