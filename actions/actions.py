@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 vers = 'Vers: 0.1.3, Date: Mar 22, 2020'
 logger.info(f"Starting vers: {vers}")
 
+
 class ActionSessionStart(Action):
     def name(self) -> Text:
         return "action_session_start"
@@ -58,7 +59,6 @@ class FollowupForm(FormAction):
 
     def name(self) -> Text:
         """Unique identifier of the form"""
-
         return "followup_form"
 
     @staticmethod
@@ -118,11 +118,40 @@ class FollowupForm(FormAction):
             tracker: Tracker,
             domain: Dict[Text, Any],
     ) -> Dict[Text, Any]:
-        """Validate Fever value."""
+        """Validate symptoms by replying appropriately to changes in the symptom ratings over time."""
+        return self.validate_symptom("fever", value, dispatcher, tracker)
 
+    def validate_sob(
+            self,
+            value: Text,
+            dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any],
+    ) -> Dict[Text, Any]:
+        """Validate symptoms by replying appropriately to changes in the symptom ratings over time."""
+        return self.validate_symptom("sob", value, dispatcher, tracker)
+
+    def validate_cough(
+            self,
+            value: Text,
+            dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any],
+    ) -> Dict[Text, Any]:
+        """Validate symptoms by replying appropriately to changes in the symptom ratings over time."""
+        return self.validate_symptom("cough", value, dispatcher, tracker)
+
+    def validate_symptom(self,
+                         symptom_name: Text,
+                         value: Text,
+                         dispatcher: CollectingDispatcher,
+                         tracker: Tracker,
+    ) -> Dict[Text, Any]:
+        """Validate symptoms by replying appropriately to changes in the symptom ratings over time."""
         new_severity = int(value)
         if 0 <= new_severity <= 10:
-            prev_severity = get_symptom_severity(tracker.sender_id, "fever")
+            prev_severity = get_symptom_severity(tracker.sender_id, symptom_name)
+
             if prev_severity is not None:
                 prev_severity = int(prev_severity)
 
@@ -134,12 +163,12 @@ class FollowupForm(FormAction):
                 elif new_severity > prev_severity:
                     dispatcher.utter_message(template="utter_worsening_fever")
 
-            return {"fever": value}
+            return {symptom_name: value}
         else:
             dispatcher.utter_message(template="utter_request_rating")
             # validation failed, set this slot to None, meaning the
             # user will be asked for the slot again
-            return {"fever": None}
+            return {symptom_name: None}
 
     def submit(
             self,
@@ -172,6 +201,7 @@ class Empathize(Action):
 
 
 def update_symptoms(tracker: Tracker) -> Optional[Response]:
+    """This function takes the data stored in the form and stores it for long-term use."""
     user_id = normalize_phone_number(tracker.sender_id)
     logger.info(f"Posting new record for {user_id}.")
     user_record = get_user_records(user_id).most_recent()
@@ -200,11 +230,11 @@ def get_symptoms_by_severity(sender_id: Text) -> List[Symptom]:
     logger.warning(f"user_id: {user_id}")
     records = get_user_records(user_id)
     logger.debug(f"records: {records}, typeof: {type(records)}")
-    if records['data']:
+    if records.data:
         record = records.most_recent()
         return record.symptoms_by_severity()
     else:
-        return None
+        return []
 
 
 def get_symptom_severity(sender_id: Text, slot_name: Text) -> Optional[int]:
@@ -246,6 +276,7 @@ class CheckSymptoms(Action):
 
         except AttributeError:
             return []
+
 
 class ActionVersion(Action):
     def name(self):

@@ -15,7 +15,7 @@ setup(
     maintainer="Will Kearns",
     maintainer_email="kearnsw@uw.edu",
     license="MIT",
-    url="https://www.symptoms.bot"
+    url="https://www.symptoms.bot", install_requires=['requests']
 )
 
 print("\n")
