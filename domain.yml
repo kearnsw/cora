@@ -41,8 +41,7 @@ responses:
   utter_version:
   - text: Model 0.1.0 - Mar 22, 2020
   utter_greet:
-  - text: Hi, how can I help? You can say things like "update my symptoms", "find
-      a testing site", or "reduce stress and anxiety".
+  - text: Hi, how can I help? You can say things like "do I have covid?" or "update my symptoms".
   utter_scheduled_greet:
   - text: Hi, it's Cora. Is now a good time to check-in?
   utter_ask_person:
