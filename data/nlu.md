@@ -22,6 +22,11 @@
 - i need testing
 - tests
 
+## intent:request_triage
+- Do I have corona?
+- How do I know if I have corona?
+- Where can I get tested?
+
 ## intent:mental_health
 - I'm lonely
 - I am alone
@@ -63,21 +68,31 @@
 - no way
 - not really
 
-## regex:rating
-- [0-9][0]?
+## regex:number
+- [0-9]+
 
 ## intent:inform
-- [0](rating)
-- [1](rating)
-- [2](rating)
-- [3](rating)
-- [4](rating)
-- [5](rating)
-- [6](rating)
-- [7](rating)
-- [8](rating)
-- [9](rating)
-- [10](rating)
+- [0](number)
+- [1](number)
+- [2](number)
+- [3](number)
+- [4](number)
+- [5](number)
+- [6](number)
+- [7](number)
+- [8](number)
+- [9](number)
+- [10](number)
+- for [myself](person:self)
+- [i](person:self) am
+- [me](person:self)
+- yes [I](person:self) am
+- im taking it for [me](person:self)
+- for my [child](person:other)
+- [someone else](person:other)
+- for my [mother](person:other)
+- I'm taking it for a [relative](person:other)
+- it's for my [neighbor](person:other)
 
 ## intent:describe_mood
 - I feel [tired](state)

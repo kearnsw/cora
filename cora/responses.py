@@ -6,6 +6,7 @@ from cora.utils import convert_model_to_snake_case
 
 logger = logging.getLogger(__name__)
 
+
 class UserRecordResponse:
     def __init__(self, user_id: Text = None, data: List[UserRecord] = None):
         self.user_id: Optional[Text] = user_id
@@ -20,5 +21,8 @@ class UserRecordResponse:
 
     def most_recent(self) -> UserRecord:
         logger.debug(f"most_recent")
-        return max(self.data, key=lambda d: d.timestamp)
+        if len(self.data) != 0:
+            return max(self.data, key=lambda d: d.timestamp)
+        else:
+            return UserRecord()
 

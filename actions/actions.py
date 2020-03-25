@@ -54,6 +54,129 @@ class ActionSessionStart(Action):
         return events
 
 
+class Triage(FormAction):
+
+    def name(self) -> Text:
+        return "triage_form"
+
+    @staticmethod
+    def required_slots(tracker: "Tracker") -> List[Text]:
+        baseline = ["person", "age", "cov"]
+        if tracker.get_slot("cov"):
+            baseline.append("cov_severity")
+        return baseline
+
+    def slot_mappings(self) -> Dict[Text, Union[Dict, List[Dict]]]:
+        """A dictionary to map required slots to
+            - an extracted entity
+            - intent: value pairs
+            - a whole message
+            or a list of them, where a first match will be picked"""
+
+        return {
+            "person": [
+                self.from_entity(entity="person"),
+                self.from_intent(intent="affirm", value=True)
+            ],
+            "age": [
+                self.from_entity(entity="number")
+            ],
+            "contact": [
+                self.from_intent(intent="affirm", value=True),
+                self.from_intent(intent="deny", value=False)
+            ],
+            "zip": [
+                self.from_entity(entity="number")
+            ],
+            "at_risk": [
+                self.from_intent(intent="affirm", value=True),
+                self.from_intent(intent="deny", value=False)
+            ],
+            "cov": [
+                self.from_intent(intent="affirm", value=True),
+                self.from_intent(intent="deny", value=False)
+            ],
+            "cov_severity": [
+                self.from_entity(entity="number"),
+            ],
+            "cough": [
+                self.from_entity(entity="number"),
+            ]
+        }
+
+    @overrides
+    async def validate(
+        self,
+        dispatcher: "CollectingDispatcher",
+        tracker: "Tracker",
+        domain: Dict[Text, Any],
+    ) -> List[EventType]:
+        """Extract and validate value of requested slot.
+
+        If nothing was extracted reject execution of the form action.
+        Subclass this method to add custom validation and rejection logic
+        """
+
+        # extract other slots that were not requested
+        # but set by corresponding entity or trigger intent mapping
+        slot_values = self.extract_other_slots(dispatcher, tracker, domain)
+
+        # extract requested slot
+        slot_to_fill = tracker.get_slot(REQUESTED_SLOT)
+        if slot_to_fill:
+            slot_values.update(self.extract_requested_slot(dispatcher, tracker, domain))
+
+            if not slot_values:
+                # reject to execute the form action
+                # if some slot was requested but nothing was extracted
+                # it will allow other policies to predict another action
+                # raise ActionExecutionRejection(
+                #     self.name(),
+                #     f"Failed to extract slot {slot_to_fill} with action {self.name()}",
+                # )
+                dispatcher.utter_message(tracker.events[-3].get('text'))
+        logger.debug(f"Validating extracted slots: {slot_values}")
+        return await self.validate_slots(slot_values, dispatcher, tracker, domain)
+
+    async def submit(self, dispatcher: "CollectingDispatcher", tracker: "Tracker", domain: Dict[Text, Any]) -> List[
+        EventType]:
+        dispatcher.utter_message(tracker.slots)
+        return [AllSlotsReset()]
+
+    def validate_person(self,
+                        value: bool,
+                        dispatcher: CollectingDispatcher,
+                        tracker: Tracker,
+                        domain: Dict[Text, Any],
+                        ) -> Dict[Text, Any]:
+        """Validate symptoms by replying appropriately to changes in the symptom ratings over time."""
+        if value is None:
+            dispatcher.utter_message(template="utter_request_rating")
+            # validation failed, set this slot to None, meaning the
+            # user will be asked for the slot again
+            return {"person": None}
+        elif value:
+            return {"person": "self"}
+        else:
+            return {"person": value}
+
+    def validate_cov_severity(self,
+                          value: Text,
+                          dispatcher: CollectingDispatcher,
+                          tracker: Tracker,
+                          domain: Dict[Text, Any]
+                          ) -> Dict[Text, Any]:
+        """Validate symptoms by replying appropriately to changes in the symptom ratings over time."""
+        severity = int(value)
+        if 0 <= severity <= 10:
+            return {"cov_severity": severity}
+        else:
+            dispatcher.utter_message(template="utter_request_rating")
+            # validation failed, set this slot to None, meaning the
+            # user will be asked for the slot again
+            return {"cov_severity": None}
+
+
 class FollowupForm(FormAction):
     """Example of a custom form action"""
 
@@ -65,7 +188,8 @@ class FollowupForm(FormAction):
     def required_slots(tracker: Tracker) -> List[Text]:
         """A list of required slots that the form has to fill"""
         logger.info("followup_form, required_slots")
-        return [symptom.name.lower() for symptom in get_symptoms_by_severity(tracker.sender_id)]
+        symptoms = [symptom.name.lower() for symptom in get_symptoms_by_severity(tracker.sender_id)]
+        return symptoms if len(symptoms) > 0 else []
 
     def slot_mappings(self) -> Dict[Text, Union[Dict, List[Dict]]]:
         """A dictionary to map required slots to
@@ -85,10 +209,10 @@ class FollowupForm(FormAction):
 
     @overrides
     def request_next_slot(
-        self,
-        dispatcher: "CollectingDispatcher",
-        tracker: "Tracker",
-        domain: Dict[Text, Any],
+            self,
+            dispatcher: "CollectingDispatcher",
+            tracker: "Tracker",
+            domain: Dict[Text, Any],
     ) -> Optional[List[EventType]]:
         """Request the next slot and utter template if needed,
             else return None"""
@@ -119,7 +243,7 @@ class FollowupForm(FormAction):
             domain: Dict[Text, Any],
     ) -> Dict[Text, Any]:
         """Validate symptoms by replying appropriately to changes in the symptom ratings over time."""
-        return self.validate_symptom("fever", value, dispatcher, tracker)
+        return self.validate_symptom_severity("fever", value, dispatcher, tracker)
 
     def validate_sob(
             self,
@@ -129,7 +253,7 @@ class FollowupForm(FormAction):
             domain: Dict[Text, Any],
     ) -> Dict[Text, Any]:
         """Validate symptoms by replying appropriately to changes in the symptom ratings over time."""
-        return self.validate_symptom("sob", value, dispatcher, tracker)
+        return self.validate_symptom_severity("sob", value, dispatcher, tracker)
 
     def validate_cough(
             self,
@@ -139,14 +263,14 @@ class FollowupForm(FormAction):
             domain: Dict[Text, Any],
     ) -> Dict[Text, Any]:
         """Validate symptoms by replying appropriately to changes in the symptom ratings over time."""
-        return self.validate_symptom("cough", value, dispatcher, tracker)
+        return self.validate_symptom_severity("cough", value, dispatcher, tracker)
 
-    def validate_symptom(self,
-                         symptom_name: Text,
-                         value: Text,
-                         dispatcher: CollectingDispatcher,
-                         tracker: Tracker,
-    ) -> Dict[Text, Any]:
+    def validate_symptom_severity(self,
+                                  symptom_name: Text,
+                                  value: Text,
+                                  dispatcher: CollectingDispatcher,
+                                  tracker: Tracker,
+                                  ) -> Dict[Text, Any]:
         """Validate symptoms by replying appropriately to changes in the symptom ratings over time."""
         new_severity = int(value)
         if 0 <= new_severity <= 10:
@@ -182,22 +306,9 @@ class FollowupForm(FormAction):
         # utter submit template
         dispatcher.utter_message(template='utter_thank_you')
         res = update_symptoms(tracker)
-        logger.info(res.status_code, res.text)
+        if res is not None:
+            logger.info(res.status_code, res.text)
         return [AllSlotsReset()]
-
-
-class Empathize(Action):
-
-    def name(self) -> Text:
-        return "action_empathize"
-
-    async def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any], **kwargs) -> List[
-        Dict[Text, Any]]:
-        sensitive_keywords = ["died", "dies", "dying", "sick"]
-        mood = tracker.get_slot('state')
-        logger.info("Recieved: {}".format(tracker.latest_message))
-        dispatcher.utter_message("[empathic response]", image="https://i.imgur.com/nGF1K8f.jpg")
-        return []
 
 
 def update_symptoms(tracker: Tracker) -> Optional[Response]:
@@ -240,9 +351,24 @@ def get_symptoms_by_severity(sender_id: Text) -> List[Symptom]:
 def get_symptom_severity(sender_id: Text, slot_name: Text) -> Optional[int]:
     user_id: Text = normalize_phone_number(sender_id)
     records: UserRecordResponse = get_user_records(user_id)
-    symptom_severities: Dict[Text, int] = {symptom.name.lower(): symptom.severity for symptom in records.most_recent().symptoms}
+    symptom_severities: Dict[Text, int] = {symptom.name.lower(): symptom.severity for symptom in
+                                           records.most_recent().symptoms}
     logger.info(slot_name, symptom_severities)
     return symptom_severities.get(slot_name)
+
+
+class Empathize(Action):
+
+    def name(self) -> Text:
+        return "action_empathize"
+
+    async def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any], **kwargs) -> List[
+        Dict[Text, Any]]:
+        sensitive_keywords = ["died", "dies", "dying", "sick"]
+        mood = tracker.get_slot('state')
+        logger.info("Recieved: {}".format(tracker.latest_message))
+        dispatcher.utter_message("[empathic response]", image="https://i.imgur.com/nGF1K8f.jpg")
+        return []
 
 
 class CheckSymptoms(Action):
@@ -285,8 +411,8 @@ class ActionVersion(Action):
         return "action_version"
 
     def run(self, dispatcher, tracker, domain):
-        #logger.info(">>> responding with version: {}".format(vers))
-        #dispatcher.utter_message(vers) #send the message back to the user
+        # logger.info(">>> responding with version: {}".format(vers))
+        # dispatcher.utter_message(vers) #send the message back to the user
         if os.getenv('RASA_X_PROD_NGINX_SERVICE_HOST'):
             nginx_host = os.getenv('RASA_X_PROD_NGINX_SERVICE_HOST') + ':8000'
         elif os.getenv('RASA_X_1584837298_NGINX_SERVICE_HOST'):
@@ -298,11 +424,10 @@ class ActionVersion(Action):
             logger.info(f"connecting to {nginx_host}")
             request = json.loads(requests.get('http://' + nginx_host + '/api/version').text)
         except:
-            request = { "rasa-x": "", "rasa": { "production": "" }}
-            #request['rasa-x'] == ''
-            #request['rasa']['production'] = ''
+            request = {"rasa-x": "", "rasa": {"production": ""}}
+            # request['rasa-x'] == ''
+            # request['rasa']['production'] = ''
         logger.info(">> rasa x version response: {}".format(request['rasa-x']))
         logger.info(">> rasa version response: {}".format(request['rasa']['production']))
         dispatcher.utter_message(f"Action: {vers}\nRasa X: {request['rasa-x']}\nRasa:  {request['rasa']['production']}")
         return []
-

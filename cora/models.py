@@ -61,6 +61,9 @@ class UserRecord:
         self.covid_contact = covid_contact
         self.symptoms = symptoms
 
+        if symptoms is None:
+            self.symptoms = []
+
     def to_dynamo_model(self) -> Dict[Text, Any]:
         model = {"userId": self.user_id,
                  "timestamp": int(0 if self.timestamp is None else self.timestamp),
