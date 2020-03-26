@@ -15,7 +15,7 @@ RUN apt-get update -qq && \
     apt-get install -y \
       curl \
       iputils-ping \
-      aws-requests-auth
+      htop 
 #    apt-get clean \
 #    rm -rf /var/lib/apt/lists/* \
 #    rm -rf /tmp/* \
@@ -23,7 +23,7 @@ RUN apt-get update -qq && \
 #    mkdir /app
 
 # To install packages from PyPI
-RUN pip install --no-cache-dir \
+RUN pip install \
   overrides \
   aws_requests_auth
 

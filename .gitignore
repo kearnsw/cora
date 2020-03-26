@@ -51,7 +51,6 @@ train_test_split
 results
 rasa.*
 events.*
-credentials.yml
 
 temp*
 build/
@@ -60,3 +59,4 @@ build/*
 dist/
 dist/*
 deploy/
+.env
