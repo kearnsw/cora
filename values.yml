@@ -1,0 +1,57 @@
+# rasax specific settings
+rasax:
+    #name: "gcr.io/rasa-platform/rasa-x-ee"
+    tag: "0.26.2"
+    debugMode: "true"
+    # initialUser is the user which is created upon the initial start of Rasa X
+    initialUser:
+    #    username: "greg"
+        password: "7NSDoZkBdqzD"
+    passwordSalt: "wa-covid"
+    # token Rasa X accepts as authentication token from other Rasa services
+    token: "CX4G5U5p9y6E"
+    # jwtSecret which is used to sign the jwtTokens of the users
+    jwtSecret: "EYa3bgNN3ub5"
+# rasa: Settings common for all Rasa containers
+rasa:
+    tag: "1.8.2-full"
+    debugMode: "true"
+    # token Rasa accepts as authentication token from other Rasa services
+    token: "U8yfe9UmQ4h7"
+# RabbitMQ specific settings
+rabbitmq:
+    # rabbitmq settings of the subchart
+    rabbitmq:
+        # password which is used for the authentication
+        password: "Zv4F8sUnXpE7"
+# global settings of the used subcharts
+global:
+    # postgresql: global settings of the postgresql subchart
+    postgresql:
+        # postgresqlPassword is the password which is used when the postgresqlUsername equals "postgres"
+        postgresqlPassword: "8YpSf25UW48G"
+    # redis: global settings of the postgresql subchart
+    redis:
+        # password to use in case there no external secret was provided
+        password: "Q23chEw55wmW"
+    extraEnvs:
+        AWS_ACCESS_KEY: "AKIAWYSIR3AO5YLAXX2B"
+app:
+    name: "wacovid/cora-actions"
+    tag: "latest"
+    imagePullPolicy: Always
+    extraEnvs:
+        - name: ZIPWHIP_TOKEN
+          value: "1de59371-fe59-4e1d-ad01-a0dccb5b00e3:401163407"
+        - name: AWS_API_ENDPOINT
+          value: "https://picrmj04l0.execute-api.us-west-2.amazonaws.com/Dev"
+#    AWS_HOST: "picrmj04l0.execute-api.us-west-2.amazonaws.com"
+#    AWS_API_ENDPOINT: "https://picrmj04l0.execute-api.us-west-2.amazonaws.com/Dev"
+#    ZIPWHIP_TOKEN: "1de59371-fe59-4e1d-ad01-a0dccb5b00e3:401163407"
+
+#images:
+#    imagePullSecrets: 
+#        - name: gcr-pull-secret
+#    - name: gcr-pull-secret
+#    - name: greg-pull-secret
+#    - gcr-pull-secret

@@ -1,19 +1,20 @@
 ## Rasa EKS setup
 
 Rasa with AWS EKS and Helm. The main Rasa docs on this are [here](https://rasa.com/docs/rasa-x/installation-and-setup/openshift-kubernetes/#kubernetes-openshift). Rasa Helm chart git repo is [here](https://github.com/rasahq/rasa-x-helm).
-
-- Create AWS EKS Cluster
-  - Need an EKS role first. [This page](https://docs.aws.amazon.com/eks/latest/userguide/service_IAM_role.html) has instructions on how to check if the role exists. [This page](https://docs.aws.amazon.com/eks/latest/userguide/service_IAM_role.html#create-service-role) describes how to create the role.
-  - Make sure you are in the right AWS region before creating the EKS Cluster
 - [Amazon page](https://docs.aws.amazon.com/eks/latest/userguide/helm.html) on using Helm with EKS
-  - [Install aws-iam-authenticator](https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html) locally first
-  - [Create a kubeconfig for Amazon EKS](https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html)
-    - `aws eks --region us-west-2 update-kubeconfig --name wa-covid-bot`
-  - `export KUBECONFIG=~/.kube/wa-covid`
+
+### AWS Steps
+
+- [Install aws-iam-authenticator](https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html) locally first
+- Make sure you are in the right AWS region before creating the EKS Cluster 
+- Need an EKS role first. [This page](https://docs.aws.amazon.com/eks/latest/userguide/service_IAM_role.html) has instructions on how to check if the role exists. - Create AWS EKS Cluster
+
+- [Create a kubeconfig for Amazon EKS](https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html)
+- `aws eks --region us-west-2 update-kubeconfig --name wa-covid-bot`
+- `export KUBECONFIG=~/.kube/wa-covid`
 
 ## ToDo
 
-- Action code storage [options](https://aws.amazon.com/premiumsupport/knowledge-center/eks-persistent-storage/) are EBS (block storage) or EFS.
 - Deploy issue:
   - `Error from server (BadRequest): container "rasa-x" in pod "rasa-x-1584834511-rasa-x-68f7669879-vrhcn" is waiting to start: trying and failing to pull image`
   - `Error from server (BadRequest): container "rasa-x" in pod "prod-rasa-x-5bbdddd665-9nb68" is waiting to start: image can't be pulled`
@@ -57,22 +58,34 @@ From the directory containing the `values.yml` do the following:
 export KUBECONFIG=~/.kube/wa-covid
 kubectl -n <your namespace> \
 kubectl get svc
-kubectl create secret docker-registry gcr-pull-secret \
-    --docker-server=gcr.io \
-    --docker-username=_json_key \
-    --docker-password="$(cat gcr-auth.json)"
+kubectl create secret docker-registry gcr-pull-secret --docker-server=gcr.io \
+    --docker-username=_json_key --docker-password="$(cat gcr-auth.json)"
 kubectl create ns wa-covid-bot
 helm repo add rasa-x https://rasahq.github.io/rasa-x-helm
-helm install \
-    --generate-name \
-    -n wa-covid-bot \
-    --values values.yml \
-    rasa-x/rasa-x
+helm install prod -n wa-covid-bot --values values.yml rasa-x/rasa-x
 kubectl -n wa-covid-bot get pods
 kubectl -n wa-covid-bot logs rasa
 kubectl -n wa-covid-bot describe pod rasa-x
-kubectl -n wa-covid-bot get service -l app.kubernetes.io/component=nginx \
+kubectl -n wa-covid-bot get service -l app.kubernetes.io/component=nginx
     -o jsonpath="{.items..status..loadBalancer..ingress[0].ip}"
+```
+
+### Helm Secrets
+
+- [k8s and Helm Environment Vars](https://medium.com/gammastack/mounting-environment-variables-safely-with-kubernetes-secrets-and-helm-chart-764420dc787b)
+- [Kubernetes Secrets](https://kubernetes.io/docs/concepts/configuration/secret/)
+- [Helm Best Practices](https://jfrog.com/blog/helm-charts-best-practices/)
+
+```
+kubectl create secret docker-registry regsecret --docker-server=$DOCKER_REGISTRY_RUL --docker-username=$USERNAME --docker-password=$PASSWORD --docker-email=$EMAIL
+```
+
+```
+kubectl create secret generic test-secret --from-literal=username=devuser --from-literal=password='S!B\*d$zDsb'
+kubectl delete secret test-secret
+kubectl get secrets
+kubectl describe secrets/greg-pull-secret
+kubectl apply -f ./secret.yaml
 ```
 
 ### Helm Cheatsheet
@@ -95,21 +108,25 @@ Preface all of these commands with `kubectl` and you need to have `KUBECONFIG` s
 
 `export KUBECONFIG=~/.kube/wa-covid`
 
-| CMD                                                              | Info               |
-| ---------------------------------------------------------------- | ------------------ |
-| -n wa-covid-bot get pods                                         | Show running pods  |
-| -n wa-covid-bot logs <pod>                                       | Show pod logs      |
-| -n wa-covid-bot logs -l app.kubernetes.io/component=rasa-x       | logs               |
-| -n wa-covid-bot describe pod <pod>                               | Pod config         |
-| -n wa-covid-bot describe pod -l app.kubernetes.io/component=app  | Pod config         |
-| -n wa-covid-bot get service -l app.kubernetes.io/component=nginx | Get ip             |
-| -n wa-covid-bot exec -it <pod> -- /bin/bash                      | shell              |
-| -n wa-covid-bot delete pod -l app.kubernetes.io/component=app    | Delete/restart pod |
+| CMD                                                                 | Info                |
+| ------------------------------------------------------------------- | ------------------- |
+| -n wa-covid-bot get pods                                            | Show running pods   |
+| -n wa-covid-bot logs <pod>                                          | Show pod logs       |
+| -n wa-covid-bot logs -l app.kubernetes.io/component=rasa-x --follow | logs                |
+| -n wa-covid-bot describe pod <pod>                                  | Pod config          |
+| -n wa-covid-bot describe pod -l app.kubernetes.io/component=app     | Pod config          |
+| -n wa-covid-bot get service -l app.kubernetes.io/component=nginx    | Get ip              |
+| -n wa-covid-bot exec -it <pod> -- /bin/bash                         | shell               |
+| -n wa-covid-bot delete pod -l app.kubernetes.io/component=app       | Delete/restart pod  |
+| -n wa-covid-bot describe pvc                                        | List claims/storage |
+| -n wa-covid-bot delete pvc -l app=app                            | Delete all          |
 
 ### AWS CLI Cheatsheet
 
 I have profiles for my id, `wa-covid` and the api `wa-covid-api`, set up ~/.aws/credentials.
 
-| CMD                                                              | Info               |
-| ---------------------------------------------------------------- | ------------------ |
-| 
+| CMD | Info |
+| --- | ---- |
+
+
+|
