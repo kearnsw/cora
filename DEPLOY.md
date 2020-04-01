@@ -63,6 +63,7 @@ kubectl create secret docker-registry gcr-pull-secret --docker-server=gcr.io \
 kubectl create ns wa-covid-bot
 helm repo add rasa-x https://rasahq.github.io/rasa-x-helm
 helm install prod -n wa-covid-bot --values values.yml rasa-x/rasa-x
+helm install prod --dry-run -n wa-covid-bot --values values.yml rasa-x/rasa-x
 kubectl -n wa-covid-bot get pods
 kubectl -n wa-covid-bot logs rasa
 kubectl -n wa-covid-bot describe pod rasa-x
