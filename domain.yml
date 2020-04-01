@@ -15,10 +15,21 @@ intents:
 - start
 - version
 - describe_mood
+- stressed
+- need_sleep
+- worried
+- financial_stress
+- social_isolation
+- sad
+- crisis
+- frustrated
+- suicidal
+- emergency
 entities:
 - number
 - state
 - person
+- symptom
 slots:
   age:
     type: unfeaturized
@@ -29,19 +40,25 @@ slots:
   cov:
     type: unfeaturized
     auto_fill: false
+  cov_severity:
+    type: unfeaturized
   fever:
     type: unfeaturized
     auto_fill: false
   person:
     type: unfeaturized
     auto_fill: false
-  cov_severity:
+  severity:
     type: unfeaturized
+  symptom_list:
+    type: list
+  symptoms:
+    type: list
 responses:
   utter_version:
   - text: Model 0.1.0 - Mar 22, 2020
   utter_greet:
-  - text: Hi, how can I help? You can say things like "do I have covid?" or "update my symptoms".
+  - text: Hi, it's Cora. Is now a good time to check-in?
   utter_scheduled_greet:
   - text: Hi, it's Cora. Is now a good time to check-in?
   utter_ask_person:
@@ -60,9 +77,10 @@ responses:
   utter_followup_cough:
   - text: How is your cough today on a scale of 1-10? Last time, you rated it a {severity}.
   utter_ask_fever:
-  - text: How would you rate your fever on a scale of 1-10?
+  - text: What is your temperature this morning?
   utter_followup_fever:
-  - text: How is your fever today on a scale of 1-10? Last time, you rated it a {severity}.
+  - text: What is your temperature this morning? Last time, we spoke your temperature
+      was 100.1.
   utter_submit:
   - text: All done!
   utter_slots_values:
@@ -72,12 +90,19 @@ responses:
   utter_ask_continue:
   - text: do you want to continue?
   utter_default:
-  - text: sorry, I didn't understand you, please try input something else
+  - text: sorry, I didn't understand you, please try input something else.
   utter_iamabot:
   - text: I am a bot built to help public health officials, doctors, and researchers
       get up to date data on coronavirus.
   utter_thank_you:
   - text: Thank you for taking the time to check-in today!
+  utter_new_symptoms:
+  - text: Are you experiencing any new symptoms today?
+  utter_ask_new_symptoms:
+  - text: Which new symptoms are you experiencing?
+  utter_other_new_symptoms:
+  - text: Are there any additional symptoms that you've been experiencing since our
+      last check-in?
   utter_feeling_better:
   - text: I'm glad to hear you are feeling better.
   utter_worsening_symptom:
@@ -87,6 +112,32 @@ responses:
       could you please provide a number between 1 and 10?
   utter_check_others:
   - text: Let's check your other symptoms.
+  utter_worry_suggestion:
+  - text: Talk to friends or family members. They might help you see your problems
+      in new ways and suggest solutions. Or, just being able to talk to a family member
+      or friend about a source of worry may help you feel better. I heard some advice
+      on this podcast as well, http://harvardhealthpodcast.libsyn.com/how-to-conquer-your-anxieties-during-the-covid-19-outbreak
+  utter_stress_suggestion:
+  - text: Take time for yourself. It could be going on a walk, listening to music,
+      or reading a good book.
+  utter_sleep_suggestion:
+  - text: Not getting enough sleep can affect both your physical and mental health.
+      The National Institute of Health has several resources for improving your sleep
+      (https://medlineplus.gov/healthysleep.html).
+  utter_financial_stress_suggestion:
+  - text: I understand that can be stressful. I found information about financial
+      assistance on this website. (https://www.governor.wa.gov/issues/issues/covid-19-resources/covid-19-resources-businesses-and-workers)
+  utter_try_suggestion:
+  - text: Can you try that?
+  utter_check_in_reminder:
+  - text: I'll check-in again tomorrow.
+  utter_how_are_you:
+  - text: How are you doing today? You can say anything and I'll try to direct you
+      to resources that may be able to help.
+  utter_social_isolation_suggestion:
+  - text: This is a difficult time, but you don't need to go it alone. Social distancings
+      does not equal social isolation. Here are some ideas to use to keep up with
+      friends and family while we stay at home.
 actions:
 - action_version
 - utter_version
@@ -112,6 +163,18 @@ actions:
 - utter_ask_age
 - utter_ask_cov
 - utter_ask_cov_severity
+- utter_new_symptoms
+- utter_sleep_suggestion
+- utter_stress_suggestion
+- utter_worry_suggestion
+- utter_try_suggestion
+- utter_check_in_reminder
+- utter_how_are_you
+- utter_social_isolation_suggestion
+- utter_financial_stress_suggestion
+- action_add_symptom
+- utter_ask_new_symptoms
+- utter_other_new_symptoms
 forms:
 - followup_form
 - triage_form

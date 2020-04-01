@@ -25,3 +25,7 @@ policies:
     epochs: 100
   - name: MappingPolicy
   - name: FormPolicy
+  - name: FallbackPolicy
+    nlu_threshold: 0.5
+    core_threshold: 0.3
+    fallback_action_name: "action_default_fallback"

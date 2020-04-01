@@ -189,7 +189,8 @@ class FollowupForm(FormAction):
         """A list of required slots that the form has to fill"""
         logger.info("followup_form, required_slots")
         symptoms = [symptom.name.lower() for symptom in get_symptoms_by_severity(tracker.sender_id)]
-        return symptoms if len(symptoms) > 0 else []
+        # return symptoms if len(symptoms) > 0 else []
+        return ["fever", "cough"]
 
     def slot_mappings(self) -> Dict[Text, Union[Dict, List[Dict]]]:
         """A dictionary to map required slots to
@@ -200,10 +201,10 @@ class FollowupForm(FormAction):
 
         return {
             "fever": [
-                self.from_entity(entity="rating"),
+                self.from_entity(entity="number"),
             ],
             "cough": [
-                self.from_entity(entity="rating"),
+                self.from_entity(entity="number"),
             ]
         }
 
@@ -243,7 +244,7 @@ class FollowupForm(FormAction):
             domain: Dict[Text, Any],
     ) -> Dict[Text, Any]:
         """Validate symptoms by replying appropriately to changes in the symptom ratings over time."""
-        return self.validate_symptom_severity("fever", value, dispatcher, tracker)
+        return self.validate_symptom_severity("fever", 0, 120, value, dispatcher, tracker)
 
     def validate_sob(
             self,
@@ -253,7 +254,7 @@ class FollowupForm(FormAction):
             domain: Dict[Text, Any],
     ) -> Dict[Text, Any]:
         """Validate symptoms by replying appropriately to changes in the symptom ratings over time."""
-        return self.validate_symptom_severity("sob", value, dispatcher, tracker)
+        return self.validate_symptom_severity("sob", 0, 10, value, dispatcher, tracker)
 
     def validate_cough(
             self,
@@ -263,21 +264,23 @@ class FollowupForm(FormAction):
             domain: Dict[Text, Any],
     ) -> Dict[Text, Any]:
         """Validate symptoms by replying appropriately to changes in the symptom ratings over time."""
-        return self.validate_symptom_severity("cough", value, dispatcher, tracker)
+        return self.validate_symptom_severity("cough", 0, 10, value, dispatcher, tracker)
 
     def validate_symptom_severity(self,
                                   symptom_name: Text,
+                                  min_value: float,
+                                  max_value: float,
                                   value: Text,
                                   dispatcher: CollectingDispatcher,
                                   tracker: Tracker,
                                   ) -> Dict[Text, Any]:
         """Validate symptoms by replying appropriately to changes in the symptom ratings over time."""
-        new_severity = int(value)
-        if 0 <= new_severity <= 10:
+        new_severity = float(value)
+        if min_value <= new_severity <= max_value:
             prev_severity = get_symptom_severity(tracker.sender_id, symptom_name)
 
             if prev_severity is not None:
-                prev_severity = int(prev_severity)
+                prev_severity = float(prev_severity)
 
                 # Condition improved
                 if new_severity < prev_severity:
@@ -289,7 +292,7 @@ class FollowupForm(FormAction):
 
             return {symptom_name: value}
         else:
-            dispatcher.utter_message(template="utter_request_rating")
+            dispatcher.utter_message(f"Please provide a value between {min_value} and {max_value}")
             # validation failed, set this slot to None, meaning the
             # user will be asked for the slot again
             return {symptom_name: None}
@@ -304,7 +307,6 @@ class FollowupForm(FormAction):
             after all required slots are filled"""
 
         # utter submit template
-        dispatcher.utter_message(template='utter_thank_you')
         res = update_symptoms(tracker)
         if res is not None:
             logger.info(res.status_code, res.text)
@@ -357,6 +359,15 @@ def get_symptom_severity(sender_id: Text, slot_name: Text) -> Optional[int]:
     return symptom_severities.get(slot_name)
 
 
+class Suggest(Action):
+
+    def name(self) -> Text:
+        return "action_suggest"
+
+    async def run(self, dispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        pass
+
+
 class Empathize(Action):
 
     def name(self) -> Text:
@@ -368,6 +379,64 @@ class Empathize(Action):
         mood = tracker.get_slot('state')
         logger.info("Recieved: {}".format(tracker.latest_message))
         dispatcher.utter_message("[empathic response]", image="https://i.imgur.com/nGF1K8f.jpg")
+        return []
+
+
+class UpdateSymptoms(Action):
+    """
+    This action retrieves slots from the user record and asks questions to follow-up.
+    """
+
+    def __init__(self):
+        self.templates = {
+            "ask_severity_no_value": "Last time we talked you let me know that you were experiencing {symptom}. "
+                                     "How would you rate this symptom today on a scale of 1-10?",
+            "ask_severity": "Last we talked you rated your {symptom} as a {severity}. "
+                            "How would you rate this symptom now on a scale of 1-10?"}
+
+    def name(self) -> Text:
+        return "action_update_symptoms"
+
+    async def run(self, dispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+
+        events = []
+
+        try:
+            for symptom in get_symptoms_by_severity(tracker.sender_id):
+                if tracker.get_slot(symptom.name) is not None:
+                    if symptom.severity is not None:
+                        dispatcher.utter_message(self.templates["ask_severity"].format(symptom=symptom.name,
+                                                                                       severity=symptom.severity))
+                    else:
+                        dispatcher.utter_message(self.templates["ask_severity_no_value"].format(symptom=symptom.name))
+                    return [ActionExecuted('action_ask_' + symptom.name)]
+
+        except AttributeError:
+            return []
+
+
+class AddSymptom(Action):
+    """
+    This action retrieves slots from the user record and asks questions to follow-up.
+    """
+
+    def __init__(self):
+        self.templates = {"utter_new_symptom": "I'm sorry to hear that you've developed a {symptoms}"}
+
+    def name(self) -> Text:
+        return "action_add_symptom"
+
+    async def run(self, dispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+
+        symptoms = list(tracker.get_latest_entity_values("symptom"))
+        print(symptoms)
+        if len(symptoms) == 1:
+            symptom_string = symptoms[0]
+        else:
+            symptom_string = ", ".join(symptoms[:-1]) + " and " + symptoms[-1]
+        dispatcher.utter_message(self.templates["utter_new_symptom"].format(symptoms=symptom_string))
+
+
         return []
 
 
