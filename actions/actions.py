@@ -17,7 +17,7 @@ from cora.responses import UserRecordResponse
 from cora.utils import normalize_phone_number
 
 logger = logging.getLogger(__name__)
-vers = 'Vers: 0.1.3, Date: Mar 22, 2020'
+vers = 'Vers: 0.1.5, Date: Mar 31, 2020'
 logger.info(f"Starting vers: {vers}")
 
 

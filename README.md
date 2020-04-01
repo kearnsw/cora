@@ -11,7 +11,7 @@ Deployment notes can be found in [DEPLOY.md](DEPLOY.md)
 Build image locally:
 
 ```
-export VERS=0.1.4
+export VERS=0.1.5
 docker build -t wacovid/cora-actions:latest -t wacovid/cora-actions:${VERS} .
 ```
 
@@ -28,7 +28,15 @@ docker login --username=wacovid --password=xyzzy
 docker push wacovid/cora-actions
 ```
 
-View docker hub tags: https://hub.docker.com/r/wacovid/cora-actions/tags
+View docker hub tags to confirm it has been updated: https://hub.docker.com/r/wacovid/cora-actions/tags
+
+## Restart Kubernetes Action Pod
+
+To update the Kubernetes action agent pod run the following command. Note that you will need the local AWS cli connected to the account and have `kubectl` installed:
+
+```
+kubectl -n wa-covid-bot delete pod -l app.kubernetes.io/component=app
+```
 
 ## Runnnig Locally
 
