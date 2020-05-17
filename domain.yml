@@ -30,8 +30,45 @@ entities:
 - state
 - person
 - symptom
+- gender
 slots:
   age:
+    type: unfeaturized
+    auto_fill: false
+  gender:
+    type: unfeaturized
+    auto_fill: false
+  financial_impact:
+    type: unfeaturized
+    auto_fill: false
+  household_number:
+    type: unfeaturized
+    auto_fill: false
+  satisfaction:
+    type: unfeaturized
+    auto_fill: false
+  worthwhile:
+    type: unfeaturized
+    auto_fill: false
+  happy:
+    type: unfeaturized
+    auto_fill: false
+  anxiety:
+    type: unfeaturized
+    auto_fill: false
+  sr_hope:
+    type: unfeaturized
+    auto_fill: false
+  sr_anxiety:
+    type: unfeaturized
+    auto_fill: false
+  sr_solutions:
+    type: unfeaturized
+    auto_fill: false
+  sr_barriers:
+    type: unfeaturized
+    auto_fill: false
+  sr_overcome_barriers:
     type: unfeaturized
     auto_fill: false
   cough:
@@ -58,13 +95,37 @@ responses:
   utter_version:
   - text: Model 0.1.0 - Mar 22, 2020
   utter_greet:
-  - text: Hi, it's Cora. Is now a good time to check-in?
+  - text: Hi, I'm Cora. Sometimes I'll ask questions that require a specific response, I'll give a hint for how you can respond (ok). Other questions will let you respond freely, I'll indicate this with a ✏️.
   utter_scheduled_greet:
   - text: Hi, it's Cora. Is now a good time to check-in?
   utter_ask_person:
   - text: First, are you taking this survey for yourself or for someone else?
   utter_ask_age:
-  - text: What is your age?
+  - text: How old are you? (#)
+  utter_ask_gender:
+  - text: What is your gender? (Male, Female, Other)
+  utter_ask_financial_impact:
+  - text: Has covid-19 effected your financial situation? (Yes, No)
+  utter_ask_household_number:
+  - text: How many people live in your household? (#)
+  utter_ask_satisfaction:
+  - text: Overall, how satisfied are you with your life nowadays? (1-10)
+  utter_ask_worthwhile:
+  - text: Overall, to what extent do you feel that the things you do in your life are worthwhile? (1-10)
+  utter_ask_happy:
+  - text: Overall, how happy did you feel yesterday? (1-10)
+  utter_ask_anxiety:
+  - text: On a scale where 1 is “not at all anxious” and 10 is “completely anxious”, overall, how anxious did you feel yesterday? (1-10)
+  utter_ask_sr_hope:
+  - text: What gave you the most hope today? ✏️
+  utter_ask_sr_anxiety:
+  - text: What caused you the most anxiety today? ✏️
+  utter_ask_sr_solutions:
+  - text: What are some possible solutions to help you feel better? ✏️
+  utter_ask_sr_barriers:
+  - text: What are some possible barriers to implementing those solutions? ✏️
+  utter_ask_sr_overcome_barriers:
+  - text: How could you overcome those barriers? ✏️
   utter_ask_cov:
   - text: Do you have any of the these following symptoms?
   utter_ask_cov_severity:
@@ -160,7 +221,6 @@ actions:
 - utter_request_rating
 - utter_check_others
 - utter_ask_person
-- utter_ask_age
 - utter_ask_cov
 - utter_ask_cov_severity
 - utter_new_symptoms
@@ -175,6 +235,23 @@ actions:
 - action_add_symptom
 - utter_ask_new_symptoms
 - utter_other_new_symptoms
+- utter_ask_age
+- utter_ask_gender
+- utter_ask_financial_impact
+- utter_ask_household_number
+- utter_ask_satisfaction
+- utter_ask_worthwhile
+- utter_ask_happy
+- utter_ask_anxiety
+- utter_ask_sr_hope
+- utter_ask_sr_anxiety
+- utter_ask_sr_solutions
+- utter_ask_sr_barriers
+- utter_ask_sr_overcome_barriers
 forms:
 - followup_form
 - triage_form
+- questionnaire_form
+- daily_questionnaire_form
+- short_response_form
+- weekly_form

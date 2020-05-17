@@ -177,6 +177,207 @@ class Triage(FormAction):
             return {"cov_severity": None}
 
 
+class QuestionnaireForm(FormAction):
+    """Example of a custom form action"""
+
+    def name(self) -> Text:
+        """Unique identifier of the form"""
+        return "questionnaire_form"
+
+    @staticmethod
+    def required_slots(tracker: Tracker) -> List[Text]:
+        """A list of required slots that the form has to fill"""
+        return ["age", "gender", "financial_impact", "household_number"]
+
+    def slot_mappings(self) -> Dict[Text, Union[Dict, List[Dict]]]:
+        """A dictionary to map required slots to
+            - an extracted entity
+            - intent: value pairs
+            - a whole message
+            or a list of them, where a first match will be picked"""
+
+        return {
+            "age": [
+                self.from_entity(entity="number"),
+            ],
+            "gender": [
+                self.from_entity(entity="gender"),
+            ],
+            "financial_impact": [
+                self.from_intent(intent="affirm", value=True),
+                self.from_intent(intent="deny", value=False)
+            ],
+            "household_number": [
+                self.from_entity(entity="number")
+            ]
+        }
+
+    def submit(
+            self,
+            dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any],
+    ) -> List[Dict]:
+        """Define what the form has to do
+            after all required slots are filled"""
+
+        return [AllSlotsReset()]
+
+
+class DailyQuestionnaireForm(FormAction):
+    """Example of a custom form action"""
+
+    def name(self) -> Text:
+        """Unique identifier of the form"""
+        return "daily_questionnaire_form"
+
+    @staticmethod
+    def required_slots(tracker: Tracker) -> List[Text]:
+        """A list of required slots that the form has to fill"""
+        return ["satisfaction", "worthwhile", "happy", "anxiety"]
+
+    def slot_mappings(self) -> Dict[Text, Union[Dict, List[Dict]]]:
+        """A dictionary to map required slots to
+            - an extracted entity
+            - intent: value pairs
+            - a whole message
+            or a list of them, where a first match will be picked"""
+
+        return {
+            "satisfaction": [
+                self.from_entity(entity="number"),
+            ],
+            "worthwhile": [
+                self.from_entity(entity="number"),
+            ],
+            "happy": [
+                self.from_entity(entity="number")
+            ],
+            "anxiety": [
+                self.from_entity(entity="number")
+            ]
+        }
+
+    @overrides
+    async def validate(
+        self,
+        dispatcher: "CollectingDispatcher",
+        tracker: "Tracker",
+        domain: Dict[Text, Any],
+    ) -> List[EventType]:
+        """Extract and validate value of requested slot.
+
+        If nothing was extracted reject execution of the form action.
+        Subclass this method to add custom validation and rejection logic
+        """
+
+        # extract other slots that were not requested
+        # but set by corresponding entity or trigger intent mapping
+        # slot_values = self.extract_other_slots(dispatcher, tracker, domain)
+        slot_values = {}
+        # extract requested slot
+        slot_to_fill = tracker.get_slot(REQUESTED_SLOT)
+        if slot_to_fill:
+            slot_values.update(self.extract_requested_slot(dispatcher, tracker, domain))
+
+        logger.debug(f"Validating extracted slots: {slot_values}")
+        return await self.validate_slots(slot_values, dispatcher, tracker, domain)
+
+    def submit(
+            self,
+            dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any],
+    ) -> List[Dict]:
+        """Define what the form has to do
+            after all required slots are filled"""
+        print(tracker.slots)
+        return [AllSlotsReset()]
+
+
+class ShortResponseForm(FormAction):
+    """Example of a custom form action"""
+
+    def name(self) -> Text:
+        """Unique identifier of the form"""
+        return "short_response_form"
+
+    @staticmethod
+    def required_slots(tracker: Tracker) -> List[Text]:
+        """A list of required slots that the form has to fill"""
+        return ["sr_hope", "sr_anxiety"]
+
+    def slot_mappings(self) -> Dict[Text, Union[Dict, List[Dict]]]:
+        """A dictionary to map required slots to
+            - an extracted entity
+            - intent: value pairs
+            - a whole message
+            or a list of them, where a first match will be picked"""
+
+        return {
+            "sr_hope": [
+                self.from_text(),
+            ],
+            "sr_anxiety": [
+                self.from_text(),
+            ]
+        }
+
+    def submit(
+            self,
+            dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any],
+    ) -> List[Dict]:
+        """Define what the form has to do
+            after all required slots are filled"""
+
+        return [AllSlotsReset()]
+
+
+class WeeklyForm(FormAction):
+    """Example of a custom form action"""
+
+    def name(self) -> Text:
+        """Unique identifier of the form"""
+        return "weekly_form"
+
+    @staticmethod
+    def required_slots(tracker: Tracker) -> List[Text]:
+        """A list of required slots that the form has to fill"""
+        return ["sr_solutions", "sr_barriers", "sr_overcome_barriers"]
+
+    def slot_mappings(self) -> Dict[Text, Union[Dict, List[Dict]]]:
+        """A dictionary to map required slots to
+            - an extracted entity
+            - intent: value pairs
+            - a whole message
+            or a list of them, where a first match will be picked"""
+
+        return {
+            "sr_solutions": [
+                self.from_text()
+            ],
+            "sr_barriers": [
+                self.from_text()
+            ],
+            "sr_overcome_barriers": [
+                self.from_text()
+            ]
+        }
+
+    def submit(
+            self,
+            dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any],
+    ) -> List[Dict]:
+        """Define what the form has to do
+            after all required slots are filled"""
+
+        return [AllSlotsReset()]
+
+
 class FollowupForm(FormAction):
     """Example of a custom form action"""
 

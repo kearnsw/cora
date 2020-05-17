@@ -89,6 +89,9 @@
 - I [can't smell](symptom:losot).
 - I can't stop [coughing](symptom:cough).
 - yes I'm [coughing](symptom:cough).
+- [male](gender)
+- [female](gender)
+- [other](gender)
 
 ## intent:ask
 - What's that?
@@ -210,6 +213,3 @@
 - i'm depressed
 - this is depressing
 - i'm sad
-
-
-## intent:
