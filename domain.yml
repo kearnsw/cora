@@ -25,6 +25,9 @@ intents:
 - frustrated
 - suicidal
 - emergency
+- reset:
+    name: reset
+    triggers: action_reset_full
 entities:
 - number
 - state
@@ -248,6 +251,7 @@ actions:
 - utter_ask_sr_solutions
 - utter_ask_sr_barriers
 - utter_ask_sr_overcome_barriers
+- action_reset_full
 forms:
 - followup_form
 - triage_form

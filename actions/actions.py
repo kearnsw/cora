@@ -7,12 +7,12 @@ import os
 
 from overrides import overrides
 from rasa_sdk import Tracker, Action
-from rasa_sdk.events import ActionExecuted, AllSlotsReset, EventType, SessionStarted, SlotSet
+from rasa_sdk.events import ActionExecuted, AllSlotsReset, EventType, SessionStarted, SlotSet, Form, Restarted
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.forms import FormAction, REQUESTED_SLOT
 
-from cora.api import get_user_records, put_user_record
-from cora.models import Symptom, UserRecord
+from cora.api import get_user_records, put_user_record, put_survey_response
+from cora.models import Symptom, UserRecord, SurveyResponse
 from cora.responses import UserRecordResponse
 from cora.utils import normalize_phone_number
 
@@ -220,7 +220,7 @@ class QuestionnaireForm(FormAction):
     ) -> List[Dict]:
         """Define what the form has to do
             after all required slots are filled"""
-
+        send_survey_response(tracker)
         return [AllSlotsReset()]
 
 
@@ -291,7 +291,7 @@ class DailyQuestionnaireForm(FormAction):
     ) -> List[Dict]:
         """Define what the form has to do
             after all required slots are filled"""
-        print(tracker.slots)
+        send_survey_response(tracker)
         return [AllSlotsReset()]
 
 
@@ -331,7 +331,7 @@ class ShortResponseForm(FormAction):
     ) -> List[Dict]:
         """Define what the form has to do
             after all required slots are filled"""
-
+        send_survey_response(tracker)
         return [AllSlotsReset()]
 
 
@@ -374,7 +374,7 @@ class WeeklyForm(FormAction):
     ) -> List[Dict]:
         """Define what the form has to do
             after all required slots are filled"""
-
+        send_survey_response(tracker)
         return [AllSlotsReset()]
 
 
@@ -701,3 +701,17 @@ class ActionVersion(Action):
         logger.info(">> rasa version response: {}".format(request['rasa']['production']))
         dispatcher.utter_message(f"Action: {vers}\nRasa X: {request['rasa-x']}\nRasa:  {request['rasa']['production']}")
         return []
+
+
+def send_survey_response(tracker):
+    tracker.slots.pop("requested_slot")
+    put_survey_response(SurveyResponse(tracker.sender_id, {k: v for k, v in tracker.slots.items() if v is not None}))
+
+
+class ActionResetFull(Action):
+    def name(self):
+        return "action_reset_full"
+
+    def run(self, dispatcher, tracker, domain):
+        dispatcher.utter_template("utter_reset_full", tracker)
+        return [Form(None), AllSlotsReset(None), Restarted(None)]
