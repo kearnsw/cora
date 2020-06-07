@@ -5,7 +5,7 @@
 # docker push wacovid/cora-actions
 # docker build -t test:actions .
 # docker run -p 5055:5055 test:actions
-FROM rasa/rasa-sdk:1.8.1
+FROM rasa/rasa-sdk:1.10.1
 
 SHELL ["/bin/bash", "-c"]
 

@@ -229,7 +229,7 @@ class DailyQuestionnaireForm(FormAction):
 
     def name(self) -> Text:
         """Unique identifier of the form"""
-        return "daily_questionnaire_form"
+        return "daily_form"
 
     @staticmethod
     def required_slots(tracker: Tracker) -> List[Text]:
@@ -705,7 +705,8 @@ class ActionVersion(Action):
 
 def send_survey_response(tracker):
     tracker.slots.pop("requested_slot")
-    put_survey_response(SurveyResponse(tracker.sender_id, {k: v for k, v in tracker.slots.items() if v is not None}))
+    res = put_survey_response(SurveyResponse(tracker.sender_id, {k: v for k, v in tracker.slots.items() if v is not None}))
+    logger.info(res.json())
 
 
 class ActionResetFull(Action):

@@ -1,6 +1,19 @@
 from typing import Any, Dict, List, Optional, Text
 
-from cora.utils import convert_model_to_snake_case
+from cora.utils import convert_model_to_snake_case, unix_epoch
+
+
+class SurveyResponse:
+    def __init__(self, user_id: Text, answers: Dict[Text, Any], date: float = None):
+        self.user_id = user_id
+        self.answers = answers
+        self.date = date if date is not None else unix_epoch()
+
+    def to_dynamo_model(self) -> Dict[Text, Any]:
+        model = {"userId": self.user_id,
+                 "date": self.date,
+                 "answers": self.answers}
+        return {k: v for k, v in model.items() if v is not None and v != ""}
 
 
 class Symptom:
