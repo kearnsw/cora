@@ -58,7 +58,7 @@ responses:
     - text: 'What gave you the most hope today? ✏️'
   utter_ask_sr_anxiety:
     - text: 'What caused you the most anxiety today? ✏️'
-  utter_weekly_instructions:
+  utter_instructions_weekly:
     - text: 'Once a week, I''ll ask you to reflect on your feelings for the previous week to come up with strategies to improve your mental health over the coming week.'
   utter_ask_sr_solutions:
     - text: 'What is a possible solutions to help you feel better? ✏️'
@@ -67,7 +67,7 @@ responses:
   utter_ask_sr_overcome_barriers:
     - text: 'How might you overcome this barrier? ✏️'
   utter_default:
-    - text: 'sorry, I didn''t understand you, please try input something else.'
+    - text: 'Sorry, I didn''t understand. Please check the instructions and try again. If there is still an issue, please reach out to a study team member.'
   utter_thank_you:
     - text: 'Thank you for taking the time to check-in today!'
   utter_thank_you_weekly:
@@ -86,7 +86,7 @@ actions:
   - utter_instructions_short_response
   - utter_ask_sr_hope
   - utter_ask_sr_anxiety
-  - utter_weekly_instructions
+  - utter_instructions_weekly
   - utter_ask_sr_solutions
   - utter_ask_sr_barriers
   - utter_ask_sr_overcome_barriers

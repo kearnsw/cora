@@ -4,20 +4,13 @@ language: en
 pipeline:
   - name: WhitespaceTokenizer
   - name: RegexFeaturizer
-  - name: LexicalSyntacticFeaturizer
-  - name: CountVectorsFeaturizer
-  - name: CountVectorsFeaturizer
-    analyzer: "char_wb"
-    min_ngram: 1
-    max_ngram: 4
-  - name: EntitySynonymMapper
-  - name: ResponseSelector
-    epochs: 100
+  - name: CRFEntityExtractor
+
 
 # Configuration for Rasa Core.
 # https://rasa.com/docs/rasa/core/policies/
 policies:
-  - name: MemoizationPolicy
+  - name: AugmentedMemoizationPolicy
   - name: MappingPolicy
   - name: FormPolicy
   - name: FallbackPolicy

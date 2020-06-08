@@ -1,5 +1,5 @@
 ## regex:number
-- [0-9]+
+- [0-9]{1-2}
 
 ## intent:inform
 - [1](number)
