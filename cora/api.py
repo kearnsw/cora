@@ -7,7 +7,7 @@ from requests import Response
 from cora import config
 import logging
 
-from cora.models import UserRecord
+from cora.models import UserRecord, SurveyResponse
 from cora.responses import UserRecordResponse
 
 SIGV4_HEADERS: AWSRequestsAuth = AWSRequestsAuth(
@@ -39,6 +39,13 @@ def put_user_record(record: UserRecord) -> Response:
     print(json.dumps(record.to_dynamo_model()))
     return requests.post(
         API_ENDPOINT + "/users", json=record.to_dynamo_model(), auth=SIGV4_HEADERS
+    )
+
+
+def put_survey_response(response: SurveyResponse) -> Response:
+    print(json.dumps(response.to_dynamo_model()))
+    return requests.post(
+        API_ENDPOINT + "/surveys", json=response.to_dynamo_model(), auth=SIGV4_HEADERS
     )
 
 
