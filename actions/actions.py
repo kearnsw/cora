@@ -316,10 +316,10 @@ class ShortResponseForm(FormAction):
 
         return {
             "sr_hope": [
-                self.from_text(),
+                self.from_text(not_intent="intake_event"),
             ],
             "sr_anxiety": [
-                self.from_text(),
+                self.from_text(not_intent="intake_event"),
             ]
         }
 
@@ -356,13 +356,13 @@ class WeeklyForm(FormAction):
 
         return {
             "sr_solutions": [
-                self.from_text()
+                self.from_text(not_intent="intake_event")
             ],
             "sr_barriers": [
-                self.from_text()
+                self.from_text(not_intent="intake_event")
             ],
             "sr_overcome_barriers": [
-                self.from_text()
+                self.from_text(not_intent="intake_event")
             ]
         }
 
