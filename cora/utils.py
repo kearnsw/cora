@@ -1,10 +1,15 @@
 import re
+import time
 import logging
 from typing import Any, Dict, Text
 
 logger = logging.getLogger(__name__)
 
 camelCase = re.compile(r"(?<!^)(?=[A-Z])")
+
+
+def unix_epoch() -> float:
+    return time.time()
 
 
 def convert_model_to_snake_case(d: Dict[Text, Any]) -> Dict[Text, Any]:
