@@ -98,3 +98,6 @@ forms:
   - daily_form
   - short_response_form
   - weekly_form
+session_config:
+  session_expiration_time: 0  # value in minutes, 0 means infinitely long
+  carry_over_slots_to_new_session: false  # set to false to forget slots between sessions
