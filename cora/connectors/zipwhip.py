@@ -118,7 +118,7 @@ class ZipwhipConnector(InputChannel):
             "https://api.zipwhip.com/message/send", data=payload
         )
 
-    def send_all(self, recipient: Text, messages: List[Dict[Text, Any]], delivery_time: int = None, delay: int = 3):
+    def send_all(self, recipient: Text, messages: List[Dict[Text, Any]], delivery_time: int = None, delay: int = 1):
         for index, message in enumerate(messages):
             if delivery_time is not None:
                 print(self.send(recipient, message.get("text"), float(delivery_time + delay * index)).text)
