@@ -11,12 +11,9 @@
   - short_response_form
   - form{"name": "short_response_form"}
   - form{"name": null}
-  - utter_instructions_weekly
-  - weekly_form
-  - form{"name": "weekly_form"}
-  - form{"name": null}
-  - utter_thank_you_weekly
-
+  - utter_thank_you
+  - utter_check_in_reminder
+  
 ## Daily Event
 * daily_event
   - utter_greet
@@ -29,6 +26,7 @@
   - form{"name": "short_response_form"}
   - form{"name": null}
   - utter_thank_you
+  - utter_check_in_reminder
   
 ## Weekly Event
 * weekly_event
@@ -46,3 +44,4 @@
   - form{"name": "weekly_form"}
   - form{"name": null}
   - utter_thank_you_weekly
+  - utter_check_in_reminder

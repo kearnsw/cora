@@ -49,9 +49,9 @@ responses:
   utter_ask_worthwhile:
     - text: 'Overall, to what extent do you feel that the things you do in your life are worthwhile? (1-10)'
   utter_ask_happy:
-    - text: 'Overall, how happy did you feel yesterday? (1-10)'
+    - text: 'Overall, how happy did you feel today? (1-10)'
   utter_ask_anxiety:
-    - text: 'Overall, how anxious did you feel yesterday? (1-10)'
+    - text: 'Overall, how anxious did you feel today? (1-10)'
   utter_instructions_short_response:
     - text: 'For this set of questions, please provide a short response ✏️.'
   utter_ask_sr_hope:
@@ -61,17 +61,17 @@ responses:
   utter_instructions_weekly:
     - text: 'Once a week, I''ll ask you to reflect on your feelings for the previous week to come up with strategies to improve your mental health over the coming week.'
   utter_ask_sr_solutions:
-    - text: 'What is a possible solutions to help you feel better? ✏️'
+    - text: 'What is a possible solution to help you feel better? ✏️'
   utter_ask_sr_barriers:
-    - text: 'What is a potential barrier to implementing this solutions? ✏️'
+    - text: 'What is a potential barrier to implementing this solution? ✏️'
   utter_ask_sr_overcome_barriers:
     - text: 'How might you overcome this barrier? ✏️'
   utter_default:
-    - text: 'Sorry, I didn''t understand. Please check the instructions and try again. If there is still an issue, please reach out to a study team member.'
+    - text: 'Sorry, I didn''t understand. Please check the instructions and try again. If there is still an issue, please reach out to a study team member by clicking this link.'
   utter_thank_you:
     - text: 'Thank you for taking the time to check-in today!'
   utter_thank_you_weekly:
-    - text: 'Thank you for taking the extra time to reflect on your feelings.'
+    - text: 'Thank you for taking the extra time to reflect on your feelings. I will message you tomorrow for your daily check-in!'
   utter_check_in_reminder:
     - text: 'I''ll check-in again tomorrow.'
 actions:
