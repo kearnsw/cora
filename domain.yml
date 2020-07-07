@@ -96,6 +96,8 @@ responses:
   - text: Thank you for participating in this research study! Your feedback is appreciated as we work to understand the
       effect of COVID-19 on mental health and toward the development of chatbots to improve mental wellness. Please
       complete the following exit survey to receive your payment, https://steve33.typeform.com/to/EGiSAjgM
+  utter_continue_event:
+  - text: Hi there! We apologize there was an error with the survey today and you were incorrectly sent the exit survey. There's still a little bit of time left, if you could please continue doing the daily survey we'll send the final questionnaire at the end of the study. Sorry for any confusion and again thank you for supporting research!
 actions:
 - utter_greet
 - utter_introduction
@@ -119,6 +121,7 @@ actions:
 - utter_check_in_reminder
 - utter_mistake
 - utter_exit_survey
+- utter_continue_event
 forms:
 - daily_form
 - short_response_form

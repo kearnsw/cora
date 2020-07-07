@@ -51,3 +51,16 @@
 * exit_event
   - utter_exit_survey
   
+## Continue Event
+* continue_event
+  - utter_continue_event
+  - utter_instructions_scale
+  - daily_form
+  - form{"name": "daily_form"}
+  - form{"name": null}
+  - utter_instructions_short_response
+  - short_response_form
+  - form{"name": "short_response_form"}
+  - form{"name": null}
+  - utter_thank_you
+  
