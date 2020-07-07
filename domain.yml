@@ -10,6 +10,7 @@ intents:
 - intake_event
 - mistake
 - mistake_event
+- exit_event
 entities:
 - number
 slots:
@@ -91,6 +92,10 @@ responses:
   - text: We’re aware that a subset of participants have experienced unexpected behavior
       when responding to the platform. We have resolved these issues and thanks you
       for your patience and continued contribution!
+  utter_exit_survey:
+  - text: Thank you for participating in this research study! Your feedback is appreciated as we work to understand the
+      effect of COVID-19 on mental health and toward the development of chatbots to improve mental wellness. Please
+      complete the following exit survey to receive your payment, https://steve33.typeform.com/to/EGiSAjgM
 actions:
 - utter_greet
 - utter_introduction
@@ -113,6 +118,7 @@ actions:
 - action_reset_full
 - utter_check_in_reminder
 - utter_mistake
+- utter_exit_survey
 forms:
 - daily_form
 - short_response_form
