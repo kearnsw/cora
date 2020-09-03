@@ -14,7 +14,7 @@ setup(
     author_email="kearnsw@uw.edu",
     maintainer="Will Kearns",
     maintainer_email="kearnsw@uw.edu",
-    license="MIT",
+    license="GPLv3",
     url="https://www.symptoms.bot", install_requires=['requests']
 )
 
