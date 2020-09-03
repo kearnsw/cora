@@ -2,6 +2,8 @@
 
 This repository holds the code for the Rasa X deployment of the Cora wellness study.
 
+The CDC symptom checker stories are located in `data/stories.md.bak`
+
 ## Deploy
 
 Deployment notes can be found in [DEPLOY.md](DEPLOY.md)
