@@ -2,6 +2,8 @@
 
 This repository holds the code for the Rasa X deployment of the Cora wellness study.
 
+The custom code is located in `actions/actions.py` that utilizes the `cora` package. 
+
 The CDC symptom checker stories are located in `data/stories.md.bak`
 
 ## Deploy
