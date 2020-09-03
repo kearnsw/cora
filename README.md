@@ -6,7 +6,9 @@ The CDC symptom checker stories are located in `data/stories.md.bak`
 
 ## Deploy
 
-Deployment notes can be found in [DEPLOY.md](DEPLOY.md)
+We followed the standard [Docker Compose deployment instructions](https://rasa.com/docs/rasa-x/installation-and-setup/install/docker-compose/).
+
+Additional deployment notes for EKS and K8 deployment can be found in [DEPLOY.md](DEPLOY.md)
 
 ## Action Server Docker Build
 
