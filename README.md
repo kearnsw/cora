@@ -1,6 +1,6 @@
-## Access
+# Cora: A Wellness Study for COVID-19 related Anxiety
 
-* The Rasa X UI is at http://rasa.wa-covid-org which is mapped from http://f8a207966bd411ea949d0687da031d8-145421237.us-west-2.elb.amazonaws.com:8000
+This repository holds the code for the Rasa X deployment of the Cora wellness study.
 
 ## Deploy
 
@@ -29,14 +29,6 @@ docker push wacovid/cora-actions
 ```
 
 View docker hub tags to confirm it has been updated: https://hub.docker.com/r/wacovid/cora-actions/tags
-
-## Restart Kubernetes Action Pod
-
-To update the Kubernetes action agent pod run the following command. Note that you will need the local AWS cli connected to the account and have `kubectl` installed:
-
-```
-kubectl -n wa-covid-bot delete pod -l app.kubernetes.io/component=app
-```
 
 ## Runnning Locally
 
